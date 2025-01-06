@@ -1,11 +1,33 @@
+import { useExams } from "../context/useExams";
 import ExamMonthSection from "../components/ExamMonthSection";
 import ProfileCard from "../components/ProfileCard";
 import { Button, Flex, Separator, Stack } from "@chakra-ui/react";
 import { FaClockRotateLeft, FaHouse, FaRightFromBracket } from "react-icons/fa6";
-
+import { useEffect, useState } from "react";
 
 export default function Home() {
 
+	const { exams } = useExams();
+
+	const splitExams = (exams) => {
+		let months = [];
+		exams.forEach(exam => {
+			const month = new Date(exam.start_at).toLocaleString('default', { month: 'long' });
+			if (months.includes(month))
+				return;
+			months.push(month);
+		})
+		console.log(months);
+		return months;
+	}
+
+
+	const [months, setMonths] = useState([]);
+	useEffect(() => {
+		setMonths(splitExams(exams));
+	}, [exams]);
+
+	if (months)
 	return (
 		<Flex>
 			<Stack
@@ -29,7 +51,13 @@ export default function Home() {
 				w='80%'
 				padding='8px'
 			>
-				<ExamMonthSection month='January' />
+				{months.map((month) => (
+					<ExamMonthSection key={month + 'month'} month={month} exams={
+						exams.filter(exam => 
+							new Date(exam.start_at).toLocaleString('default', { month: 'long' }) === month
+						)
+					} />
+				))}
 			</Stack>
 		</Flex>
 	);

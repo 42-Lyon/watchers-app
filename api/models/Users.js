@@ -6,6 +6,7 @@ const usersSchema = new mongoose.Schema({
 	lastname: { type: String, required: true },
 	image_url: { type: String, required: true },
 	is_staff: { type: Boolean, default: false },
+	nb_watch: { type: Number, default: 0 },
 	groups: [{ type: String }]
 });
 

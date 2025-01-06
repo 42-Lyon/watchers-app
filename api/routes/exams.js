@@ -6,7 +6,7 @@ const router = new express.Router();
 
 router.get('/', async (req, res) => {
 	const exams = await Exams.find({
-		start_at: { $gt: new Date(), $lt: new Date(new Date().getTime() + 60 * 60 * 24 * 60 * 1000) }
+	// 	start_at: { $gt: new Date(), $lt: new Date(new Date().getTime() + 60 * 60 * 24 * 60 * 1000) } // 2 months for now
 	}).sort({ start_at: 1 });
 	return res.status(200).send(exams);
 });
@@ -40,5 +40,64 @@ router.delete('/:id', isStaff, async (req, res) => {
 		return res.status(400).send();
 	}
 });
+
+router.post('/:id/register', async (req, res) => {
+	try {
+		const exam = await Exams.findById(req.params.id);
+		let is_authorized = false;
+		if (!exam) {
+			return res.status(404).send();
+		}
+		if (exam.watchers.length >= exam.nb_slots)
+			return res.status(400).send("No more slots available");
+		if (exam.watchers.includes(req.user._id))
+			return res.status(400).send("You are already registered");
+		for (const group of req.user.groups) {
+			if (exam.authorized_groups.includes(group)) {
+				is_authorized = true;
+				break;
+			}
+		}
+		if (!is_authorized) {
+			return res.status(403).send("You are not authorized to register to this exam");
+		}
+		let watch_has_experience = false;
+		if (exam.watchers.length == exam.nb_slots - 1) {
+			await exam.populate('watchers');
+			for (const watcher of exam.watchers) {
+				if (watcher.nb_watch > 0)
+				{
+					watch_has_experience = true;
+					break;
+				}
+			}
+		}
+		if (!watch_has_experience && req.user.nb_watch == 0)
+			return res.status(400).send("You need to have at least one watch to register");
+		exam.watchers.push(req.user._id);
+		await exam.save();
+		return res.status(200).send(exam);
+	}
+	catch(e) {
+		console.error(e);
+		return res.status(400).send();
+	}
+});
+
+router.post('/:id/unregister', async (req, res) => {
+	try {
+		const exam = Exams.findById(req.params.id);
+		if (!exam) {
+			return res.status(404).send();
+		}
+		exam.watchers = exam.watchers.filter(watcher => watcher !== req.user._id);
+		await exam.save();
+		return res.status(200).send(exam);
+	}
+	catch {
+		return res.status(400).send();
+	}
+});
+
 
 module.exports = router;

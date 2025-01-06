@@ -1,4 +1,4 @@
-import { Flex, Grid, Heading, Stack } from "@chakra-ui/react";
+import { Flex, Heading, Stack } from "@chakra-ui/react";
 import ExamCard from "./ExamCard";
 
 export default function ExamMonthSection({ month, exams }) {
@@ -9,9 +9,9 @@ export default function ExamMonthSection({ month, exams }) {
 				width='100%'
 				gap='8px'
 			>
-				<ExamCard />
-				<ExamCard />
-				<ExamCard />
+				{exams.map((exam, i) => (
+					<ExamCard key={exam._id} exam={exam}/>
+				))}
 			</Flex>
 		</Stack>
 	);

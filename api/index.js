@@ -5,10 +5,11 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const isLoggedIn = require('./middlewares/isLoggedIn');
-const api42 = require('./api42');
 const app = express();
 
 const corsOptions =  {
+    origin: 'http://localhost:3001',
+    credentials: true
 };
 
 app.use(session({
@@ -32,9 +33,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/exams', isLoggedIn, require('./routes/exams'));
 
 app.get('/me', isLoggedIn, async (req, res) => {
-	const me = await api42.whoAmI(req.session.user.token);
-
-	return res.status(200).send(me);
+	return res.status(200).send(req.user);
 });
 
 

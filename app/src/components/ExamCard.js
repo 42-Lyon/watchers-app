@@ -3,12 +3,13 @@ import { FaCalendar } from "react-icons/fa6";
 import ExamSlot from "./ExamSlot";
 
 export default function ExamCard({ exam, ...props }) {
+
 	return (
 		<Card.Root w='100%' {...props}>
 			<Card.Header>
-				<Card.Title display='flex' alignItems='center' gap='4px'><FaCalendar/> 07/01/2025</Card.Title>
+				<Card.Title display='flex' alignItems='center' gap='4px'><FaCalendar/> {exam.start_at.toLocaleDateString('fr-FR')}</Card.Title>
 				<Card.Description>
-					10:00 AM - 12:00 PM
+					{exam.start_at.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}) + ' - ' + exam.end_at.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}
 				</Card.Description>
 			</Card.Header>
 			<Card.Body>
