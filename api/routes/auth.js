@@ -1,0 +1,58 @@
+const express = require("express");
+const api42 = require("../api42");
+const isLoggedIn = require("../middlewares/isLoggedIn");
+const Users = require("../models/Users");
+const router = new express.Router();
+
+router.get('/42', (req, res) => {
+	res.redirect(api42.getOAuthUrl());
+});
+  
+router.get('/42/callback', async (req, res) => {
+	const code = req.query.code;
+	const token = await api42.generateUserToken(code);
+
+	const me = await api42.whoAmI(token);
+
+	req.session.user = {
+        login: me.login,
+		token
+    }
+
+	const groups = await api42.fetch(`/v2/users/${me.id}/groups`);
+
+	await Users.findOneAndUpdate(
+		{ login: me.login },
+		{
+			login: me.login,
+			firstname: me.first_name,
+			lastname: me.last_name,
+			image_url: me.image.link,
+			groups: groups.map(group => group.name)
+		},
+		{ new: true, upsert: true, useFindAndModify: false }
+	);
+
+	try {
+		await req.session.save();
+	}
+	catch (e) {
+		console.error(e);
+		return res.status(500).send('Error saving session');
+	}
+
+	return res.status(200).redirect('http://localhost:3001');
+
+});
+
+router.get('/logout', isLoggedIn, async (req, res) => {
+	try {
+        await req.session.destroy();
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send('Error logging out');
+    }
+	return res.status(200).send();
+});
+
+module.exports = router;

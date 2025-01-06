@@ -12,7 +12,7 @@ export default function Home() {
 				h='100vh'
 				minWidth='250px'
 				w='18%'
-				background='gray.800'
+				background='bg.subtle'
 				padding='8px'
 			>
 				<ProfileCard w='100%'/>
