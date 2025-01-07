@@ -4,10 +4,11 @@ import ProfileCard from "../components/ProfileCard";
 import { Button, Flex, Separator, Stack } from "@chakra-ui/react";
 import { FaClockRotateLeft, FaHouse, FaRightFromBracket } from "react-icons/fa6";
 import { useEffect, useState } from "react";
+import ExamCreationForm from "../components/ExamCreationForm";
 
 export default function Home() {
 
-	const { exams } = useExams();
+	const { exams, create } = useExams();
 
 	const splitExams = (exams) => {
 		let months = [];
@@ -61,6 +62,7 @@ export default function Home() {
 					} />
 				))}
 			</Stack>
+			<ExamCreationForm onCreate={create} />
 		</Flex>
 	);
 }
