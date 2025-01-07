@@ -1,10 +1,12 @@
-import { createListCollection, DialogCloseTrigger, Fieldset, Flex, HStack, Input, SelectLabel, SelectRoot } from "@chakra-ui/react";
+import { createListCollection, DialogCloseTrigger, Fieldset, Flex, Input, SelectLabel, SelectRoot } from "@chakra-ui/react";
 import { Button } from "./ui/button";
 import { DialogActionTrigger, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { FaPlus } from "react-icons/fa6";
 import { Field } from "./ui/field";
 import { NumberInputField, NumberInputRoot } from "./ui/number-input";
 import { SelectContent, SelectItem, SelectTrigger, SelectValueText } from "./ui/select";
+import GroupBadge from "./GroupBadge";
+import { useState } from "react";
 
 const groups = createListCollection({
 	items: [
@@ -12,9 +14,18 @@ const groups = createListCollection({
 	  { label: "Tutor", value: "Tutor" },
 	  { label: "LifeGuard", value: "LifeGuard" },
 	],
-  })
+})
 
 export default function ExamCreationForm({create}) {
+
+	const [exam, setExam] = useState({
+		date: new Date(),
+		duration: 3,
+		slots: 2,
+		authorized_groups: [],
+		title: '',
+	});
+
   return (
 	<DialogRoot lazyMount placement='center'>
 		<DialogTrigger asChild>
@@ -35,7 +46,7 @@ export default function ExamCreationForm({create}) {
 
 				<Fieldset.Content>
 					<Field label="Date" required>
-						<Input name="start_at" type="datetime-local" />
+						<Input type="datetime-local" />
 					</Field>
 
 					<Flex w="100%" justifyContent='space-between' gap='8px'>
@@ -68,14 +79,14 @@ export default function ExamCreationForm({create}) {
 						<SelectContent>
 							{groups.items.map((group) => (
 								<SelectItem item={group} key={group.value}>
-									{group.label}
+									<GroupBadge group={group.label}/>
 								</SelectItem>
 							))}
 						</SelectContent>
 					</SelectRoot>
 		
 					<Field label="Title">
-						<Input name="title"/>
+						<Input value={exam.title} onChange={(e) => setExam({...exam, title: e.target.value})}/>
 					</Field>
 
 				</Fieldset.Content>
