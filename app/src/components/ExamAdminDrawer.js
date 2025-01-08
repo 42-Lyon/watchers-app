@@ -1,9 +1,10 @@
-import { Button, DrawerBody, Flex, Text } from "@chakra-ui/react";
+import { Button, DrawerBody, Field, Flex, Text } from "@chakra-ui/react";
 import { DrawerActionTrigger, DrawerBackdrop, DrawerCloseTrigger, DrawerContent, DrawerFooter, DrawerHeader, DrawerRoot, DrawerTitle } from "./ui/drawer";
 import { FaBoxArchive, FaCalendar, FaTrashCan } from "react-icons/fa6";
 import ExamStatus from "./ExamStatus";
 import { useState } from "react";
 import { toaster } from "./ui/toaster";
+import UserSearchInput from "./UserSearchInput";
 
 export default function ExamAdminDrawer({open, setOpen, exam}) {
 
@@ -66,10 +67,9 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 			</DrawerTitle>
         </DrawerHeader>
         <DrawerBody>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua.
-          </p>
+    
+			<UserSearchInput />
+		
         </DrawerBody>
         <DrawerFooter>
 			{

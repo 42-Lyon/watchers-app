@@ -1,4 +1,5 @@
 const isStaff = require("../middlewares/isStaff");
+const parseExam = require("../middlewares/parseExam");
 const Exams = require("../models/Exams");
 const express = require("express");
 
@@ -7,9 +8,7 @@ const router = new express.Router();
 router.get('/', async (req, res) => {
 	const exams = await Exams.find({
 		is_archived: false,
-	// 	start_at: { $gt: new Date(), $lt: new Date(new Date().getTime() + 60 * 60 * 24 * 60 * 1000) } // 2 months for now
 	}).sort({ start_at: 1 }).populate('watchers');
-	// await exams.populate('watchers');
 	return res.status(200).send(exams);
 });
 
@@ -26,7 +25,7 @@ router.post('/', isStaff, async (req, res) => {
 		await exam.save();
 		return res.status(201).send(exam);
 	}
-	catch {
+	catch(e) {
 		return res.status(400).send();
 	}
 });
@@ -133,5 +132,6 @@ router.post('/:id/archived', isStaff, async (req, res) => {
 	}
 });
 
+router.use('/:id/watchers', parseExam, require('./exams/watchers'));
 
 module.exports = router;

@@ -5,10 +5,12 @@ import { Button, Flex, Separator, Stack } from "@chakra-ui/react";
 import { FaClockRotateLeft, FaHouse, FaRightFromBracket } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import ExamCreationForm from "../components/ExamCreationForm";
+import { useMe } from "../context/useMe";
 
 export default function Home() {
 
 	const { exams, create } = useExams();
+	const { me } = useMe();
 
 	const splitExams = (exams) => {
 		let months = [];
@@ -28,7 +30,7 @@ export default function Home() {
 		setMonths(splitExams(exams));
 	}, [exams]);
 
-	if (months)
+	if (months && me)
 	return (
 		<Flex>
 			<Stack
@@ -62,7 +64,7 @@ export default function Home() {
 					} />
 				))}
 			</Stack>
-			<ExamCreationForm onCreate={create} />
+			{ me.is_staff && <ExamCreationForm onCreate={create} />}
 		</Flex>
 	);
 }

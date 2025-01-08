@@ -19,14 +19,14 @@ export const ExamsProvider = ({ children }) => {
 	const create = async (exam) => {
 		const newExam = await fetch(`${config.apiUrl}/exams`, {
 			method: 'POST',
+			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			credentials: 'include',
 			body: JSON.stringify(exam),
 		});
 		if (newExam.ok) {
-			setExams([...exams, await newExam.json()]);
+			setExams([...exams, await newExam.json()].sort((a, b) => new Date(a.start_at) - new Date(b.start_at)));
 		}
 		return newExam;
 	};
@@ -103,7 +103,7 @@ export const ExamsProvider = ({ children }) => {
 				remove: () => remove(exam._id),
 			};
 		}),
-		create
+		create: (e) => create(e),
 	}}>
 		{children}
   	</ExamsContext.Provider>;

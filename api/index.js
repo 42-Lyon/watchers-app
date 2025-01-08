@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const isLoggedIn = require('./middlewares/isLoggedIn');
+const isStaff = require('./middlewares/isStaff');
 const app = express();
 
 const corsOptions =  {
@@ -27,15 +28,16 @@ app.use(session({
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/auth', require('./routes/auth'));
 app.use('/exams', isLoggedIn, require('./routes/exams'));
+app.use('/users', isLoggedIn, isStaff, require('./routes/users'));
 
 app.get('/me', isLoggedIn, async (req, res) => {
 	return res.status(200).send(req.user);
 });
-
 
 app.listen(3000, () => {
     console.log('Server is running on http://localhost:3000');

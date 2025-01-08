@@ -7,6 +7,7 @@ import { NumberInputField, NumberInputRoot } from "./ui/number-input";
 import { SelectContent, SelectItem, SelectTrigger, SelectValueText } from "./ui/select";
 import GroupBadge from "./GroupBadge";
 import { useState } from "react";
+import { toaster } from "./ui/toaster";
 
 const groups = createListCollection({
 	items: [
@@ -16,15 +17,42 @@ const groups = createListCollection({
 	],
 })
 
-export default function ExamCreationForm({create}) {
+export default function ExamCreationForm({onCreate}) {
 
 	const [exam, setExam] = useState({
-		date: new Date(),
+		start_at: '',
 		duration: 3,
-		slots: 2,
+		nb_slots: 2,
 		authorized_groups: [],
 		title: '',
 	});
+
+	const isFormValid = exam.start_at && exam.duration && exam.nb_slots;
+
+	const [loading, setLoading] = useState(false);
+	const createExam = async () => {
+		setLoading(true);
+		const res = await onCreate(exam);
+		if (!res.ok) {
+			const err = await res.text();
+			toaster.create({
+				title: err,
+				type: 'error',
+			})
+		}
+		else {
+			toaster.create({
+				title: 'Exam deleted',
+				type: 'success',
+			})
+			exam.start_at = '';
+			exam.duration = 3;
+			exam.nb_slots = 2;
+			exam.authorized_groups = [];
+			exam.title = '';
+		}
+		setLoading(false);
+	};
 
   return (
 	<DialogRoot lazyMount placement='center'>
@@ -43,21 +71,23 @@ export default function ExamCreationForm({create}) {
         </DialogHeader>
         <DialogBody>
 			<Fieldset.Root size="lg" maxW="md">
-
 				<Fieldset.Content>
 					<Field label="Date" required>
-						<Input type="datetime-local" />
+						<Input type="datetime-local" value={exam.start_at} onChange={(e) => setExam({...exam, start_at: e.target.value})}/>
 					</Field>
 
 					<Flex w="100%" justifyContent='space-between' gap='8px'>
 						<Field label="Durations" required>
 							<NumberInputRoot
+								value={exam.duration}
+								onValueChange={(e) => setExam({...exam, duration: e.value.substring(0, e.value.length - 3)})}
 								w='100%'
 								min={1}
+								max={24}
 								defaultValue="3"
 								formatOptions={{
 									style: "unit",
-									 unit: "hour"
+									unit: "hour"
 								}}
 							>
 								<NumberInputField />
@@ -65,16 +95,20 @@ export default function ExamCreationForm({create}) {
 						</Field>
 
 						<Field label="Slots" required>
-							<NumberInputRoot defaultValue="2" min={1} w='100%'>
+							<NumberInputRoot
+								defaultValue="2" min={1} w='100%'
+								value={exam.nb_slots}
+								onValueChange={(e) => setExam({...exam, nb_slots: e.value})}
+							>
 								<NumberInputField />
 							</NumberInputRoot>
 						</Field>
 
 					</Flex>
-					<SelectRoot multiple collection={groups} width="100%" required>
+					<SelectRoot multiple collection={groups} width="100%" onValueChange={(e) => setExam({...exam, authorized_groups: e.value})}>
 						<SelectLabel>Select Authorized Groups</SelectLabel>
-						<SelectTrigger>
-							<SelectValueText placeholder="Group" />
+						<SelectTrigger clearable>
+							<SelectValueText placeholder="Groups"/>
 						</SelectTrigger>
 						<SelectContent>
 							{groups.items.map((group) => (
@@ -96,7 +130,7 @@ export default function ExamCreationForm({create}) {
           <DialogActionTrigger asChild>
             <Button variant="outline">Cancel</Button>
           </DialogActionTrigger>
-          <Button>Create</Button>
+          <Button disabled={!isFormValid} loading={loading} onClick={createExam}>Create</Button>
         </DialogFooter>
         <DialogCloseTrigger />
       </DialogContent>
