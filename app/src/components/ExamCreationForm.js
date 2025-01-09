@@ -50,12 +50,15 @@ export default function ExamCreationForm({onCreate}) {
 			exam.nb_slots = 2;
 			exam.authorized_groups = [];
 			exam.title = '';
+			setOpen(false);
 		}
 		setLoading(false);
 	};
 
-  return (
-	<DialogRoot lazyMount placement='center'>
+	const [open, setOpen] = useState(false);
+
+  	return (
+	<DialogRoot lazyMount placement='center' open={open} onOpenChange={(e) => setOpen(e.open)}>
 		<DialogTrigger asChild>
 			<Button
 				position='fixed'

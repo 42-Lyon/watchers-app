@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import { MeProvider } from './context/useMe';
 import { ExamsProvider } from './context/useExams';
 import { Toaster } from './components/ui/toaster';
+import Statistics from './pages/Statistics';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
      <ExamsProvider>
       <Router>
         <Routes>
+          <Route path='/statistics' element={<Statistics/>} />
           <Route path='/' element={<Home/>} />
           <Route path='*' element={<Login/>} />
         </Routes>

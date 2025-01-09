@@ -139,16 +139,25 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
         <DrawerFooter>
 			{
 				exam.end_at < new Date() &&
-				<Button
-					loading={loading}
-					colorPalette='green'
-					onClick={archiveExam}
+				<ConfirmDialog
+					text={`Are you sure you want to archive this exam (${exam.start_at.toLocaleDateString('fr-FR')})? This action cannot be undone.`}
+					onConfirm={archiveExam}
+					confirmColor='green'
 				>
-					<FaBoxArchive/> Archived
-				</Button>
+					<Button
+						loading={loading}
+						colorPalette='green'
+					>
+						<FaBoxArchive/> Archived
+					</Button>
+				</ConfirmDialog>
 			}
-			<ConfirmDialog onConfirm={deleteExam} loading={loading}>
-				<Button colorPalette="red">
+			<ConfirmDialog
+				text={`Are you sure you want to delete this exam (${exam.start_at.toLocaleDateString('fr-FR')})? This action cannot be undone.`}
+				onConfirm={deleteExam}
+				confirmColor='red'
+			>
+				<Button colorPalette="red" loading={loading} >
 					<FaTrashCan/> Delete
 				</Button>
 			</ConfirmDialog>
