@@ -10,7 +10,6 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
 	const { login } = req.body;
-	console.log(login);
 	if (req.exam.watchers.find((watcher) => watcher.login === login)) {
 		return res.status(400).send('User already watching this exam');
 	}

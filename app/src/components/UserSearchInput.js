@@ -52,7 +52,7 @@ export default function UserSearchInput({children, onValid, ...props}) {
 								padding='4px'
 							>
 								{users.map((user) => (
-									<Flex key={user._id} gap='8px' alignItems='center' p='4px' onClick={() => setSearch(user.login)} cursor='pointer' _hover={{bg: 'bg.emphasized'}}>
+									<Flex key={user._id} gap='8px' alignItems='center' p='4px' onClick={() => {onValid(user.login); setOpen(false); setSearch('')}} cursor='pointer' _hover={{bg: 'bg.emphasized'}}>
 										<Avatar size='xs' src={user.image_url} name={user.login} />
 										{user.login}
 									</Flex>

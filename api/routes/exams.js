@@ -1,3 +1,4 @@
+const insertRow = require("../google");
 const isStaff = require("../middlewares/isStaff");
 const parseExam = require("../middlewares/parseExam");
 const Exams = require("../models/Exams");
@@ -121,13 +122,18 @@ router.post('/:id/archived', isStaff, async (req, res) => {
 		exam.is_archived = true;
 		for (const watcher of exam.watchers) {
 			watcher.nb_watch++;
+			try {
+				await insertRow(watcher.login, exam.start_at);
+			}
+			catch {
+				return res.status(500).send("Error while updating the spreadsheet");
+			}
 			await watcher.save();
 		}
 		await exam.save();
 		return res.status(200).send(exam);
 	}
-	catch (e) {
-		console.error(e);
+	catch {
 		return res.status(400).send();
 	}
 });

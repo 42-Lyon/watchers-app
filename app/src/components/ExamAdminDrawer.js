@@ -1,4 +1,4 @@
-import { Button, DrawerBody, Flex, Heading, Text } from "@chakra-ui/react";
+import { DrawerBody, Flex, Heading, Text } from "@chakra-ui/react";
 import { DrawerActionTrigger, DrawerBackdrop, DrawerCloseTrigger, DrawerContent, DrawerFooter, DrawerHeader, DrawerRoot, DrawerTitle } from "./ui/drawer";
 import { FaBoxArchive, FaCalendar, FaPlus, FaTrashCan, FaXmark } from "react-icons/fa6";
 import ExamStatus from "./ExamStatus";
@@ -7,12 +7,14 @@ import { toaster } from "./ui/toaster";
 import UserSearchInput from "./UserSearchInput";
 import ProfileCard from "./ProfileCard";
 import ExamSlot from "./ExamSlot";
+import { Button } from "./ui/button";
+import ConfirmDialog from "./ConfirmDialog";
 
 export default function ExamAdminDrawer({open, setOpen, exam}) {
-	const [isLoading, setIsLoading] = useState(false);
+	const [loading, setLoading] = useState(false);
 
 	const deleteExam = async () => {
-		setIsLoading(true);
+		setLoading(true);
 		const res = await exam.remove();
 		if (!res.ok) {
 			const err = await res.text();
@@ -27,11 +29,11 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 				type: 'success',
 			})
 		}
-		setIsLoading(false);
+		setLoading(false);
 	}
 
 	const archiveExam = async () => {
-		setIsLoading(true);
+		setLoading(true);
 		const res = await exam.archive();
 		if (!res.ok) {
 			const err = await res.text();
@@ -46,11 +48,11 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 				type: 'success',
 			})
 		}
-		setIsLoading(false);
+		setLoading(false);
 	}
 
 	const unregisterWatcher = async (watcher) => {
-		setIsLoading(true);
+		setLoading(true);
 		const res = await watcher.remove();
 		if (!res.ok) {
 			const err = await res.text();
@@ -65,11 +67,11 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 				type: 'success',
 			})
 		}
-		setIsLoading(false);
+		setLoading(false);
 	}
 
 	const registerWatcher = async (login) => {
-		setIsLoading(true);
+		setLoading(true);
 		const res = await exam.addWatcher(login);
 		if (!res.ok) {
 			const err = await res.text();
@@ -84,7 +86,7 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 				type: 'success',
 			})
 		}
-		setIsLoading(false);
+		setLoading(false);
 	}
 
 	return (
@@ -106,7 +108,6 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 			</DrawerTitle>
         </DrawerHeader>
         <DrawerBody gap='8px' display='flex' flexDir='column'>
-    
 			<Flex gap='8px' alignItems='center' paddingBottom='8px'>
 				<Heading size='md'>Watchers</Heading>
 				<Text color='fg.muted' fontSize='sm'>{exam.watchers.length}/{exam.nb_slots}</Text>
@@ -139,20 +140,18 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 			{
 				exam.end_at < new Date() &&
 				<Button
-					loading={isLoading ? 'true' : undefined}
+					loading={loading}
 					colorPalette='green'
 					onClick={archiveExam}
 				>
 					<FaBoxArchive/> Archived
 				</Button>
 			}
-          	<Button
-				colorPalette="red"
-				loading={isLoading ? 'true' : undefined}
-				onClick={deleteExam}
-			>
-				<FaTrashCan/> Delete
-			</Button>
+			<ConfirmDialog onConfirm={deleteExam} loading={loading}>
+				<Button colorPalette="red">
+					<FaTrashCan/> Delete
+				</Button>
+			</ConfirmDialog>
           <DrawerActionTrigger asChild>
             <Button variant="outline">Close</Button>
           </DrawerActionTrigger>
