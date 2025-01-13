@@ -3,7 +3,7 @@ const isStaff = require("../middlewares/isStaff");
 const parseExam = require("../middlewares/parseExam");
 const Exams = require("../models/Exams");
 const express = require("express");
-const { ExamCreationLog } = require("../models/Log");
+const { ExamCreationLog, ExamDeletionLog, ExamArchiveLog, ExamRegisterLog, ExamUnregisterLog } = require("../models/Log");
 
 const router = new express.Router();
 
@@ -95,6 +95,12 @@ router.post('/:id/register', async (req, res) => {
 		exam.watchers.push(req.user._id);
 		await exam.save();
 		await exam.populate('watchers');
+		const log = new ExamRegisterLog({
+			user: req.user._id,
+			exam: exam._id,
+			exam_date: exam.start_at
+		});
+		log.save();
 		return res.status(200).send(exam);
 	}
 	catch(e) {
@@ -115,6 +121,12 @@ router.post('/:id/unregister', async (req, res) => {
 		exam.watchers = exam.watchers.filter(watcher => !watcher.equals(req.user._id));
 		await exam.save();
 		await exam.populate('watchers');
+		const log = new ExamUnregisterLog({
+			user: req.user._id,
+			exam: exam._id,
+			exam_date: exam.start_at
+		});
+		log.save();
 		return res.status(200).send(exam);
 	}
 	catch {
@@ -146,6 +158,12 @@ router.post('/:id/archived', isStaff, async (req, res) => {
 			await watcher.save();
 		}
 		await exam.save();
+		const log = new ExamArchiveLog({
+			user: req.user._id,
+			exam: exam._id,
+			exam_date: exam.start_at
+		});
+		log.save();
 		return res.status(200).send(exam);
 	}
 	catch {
