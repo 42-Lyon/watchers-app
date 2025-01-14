@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/auth', require('./routes/auth'));
 app.use('/exams', isLoggedIn, require('./routes/exams'));
 app.use('/users', isLoggedIn, require('./routes/users'));
-app.use('/logs', isLoggedIn, isStaff, require('./routes/logs'));
+app.use('/logs', isLoggedIn, require('./routes/logs'));
 
 app.get('/me', isLoggedIn, async (req, res) => {
     const exams = await Exams.find({ watchers: req.user._id, is_archived: true  }).populate('watchers').sort({ start_at: -1 });

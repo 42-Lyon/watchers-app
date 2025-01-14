@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 				{ login: regex },
 				{ firstname: regex }
 			]
-		}).sort(sort).limit(pageSize).skip((page - 1) * pageSize);
+		}).sort(sort).skip((page - 1) * pageSize).limit(pageSize);
 		const total = await Users.countDocuments({
 			$or: [
 				{ login: regex },

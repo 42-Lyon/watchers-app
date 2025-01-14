@@ -42,6 +42,7 @@ export default function LineExamsChart({ ...props }) {
 			display='flex'
 			flexDir='column'
 			h='100%'
+			overflow='auto'
 		  >
 			<Card.Title flex={1}>Watch per month</Card.Title>
 			<Box w='100%' flex={6}>

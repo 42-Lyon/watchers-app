@@ -3,9 +3,9 @@
 // pagination
 // sort custom possible
 
-
+const mongoose = require('mongoose');
 const express = require('express');
-const {Logs: Log} = require('../models/Log');
+const {Logs} = require('../models/Log');
 const Users = require('../models/Users');
 
 const router = new express.Router();
@@ -31,8 +31,21 @@ router.get('/', async (req, res) => {
 		user_query.__t = { $in: user_query.event_types.split(',') };
 		delete user_query.event_types;
 	}
+	if (user_query.exam) {
+		try {
+			user_query.exam = new mongoose.Types.ObjectId(user_query.exam);
+		}
+		catch {
+			return res.status(200).send([]);
+		}
+	}
 	try {
-		const logs = await Log.find(user_query).sort(sort).skip((page - 1) * pageSize).limit(pageSize).populate('user').populate('forced_user').populate('exam');
+		const logs = await Logs.find(user_query).sort(sort).skip((page - 1) * pageSize).limit(pageSize).populate('user').populate('forced_user').populate('exam');
+		const total = await Logs.countDocuments(user_query);
+		res.set('X-Total-Count', total);
+		res.set('X-Page-Size', pageSize);
+		res.set('X-Page-Count', total / pageSize);
+		res.set('Access-Control-Expose-Headers', 'X-Total-Count, X-Page-Size, X-Page-Count');
 		return res.status(200).send(logs);
 	}
 	catch(e) {

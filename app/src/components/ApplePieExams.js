@@ -35,7 +35,7 @@ export default function ApplePieExams({ ...props }) {
 					  },
 					},
 					maintainAspectRatio: false,
-				  }}
+				}}
 			/>
 		</Card.Body>
 		</Card.Root>
