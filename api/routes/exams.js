@@ -3,7 +3,7 @@ const isStaff = require("../middlewares/isStaff");
 const parseExam = require("../middlewares/parseExam");
 const Exams = require("../models/Exams");
 const express = require("express");
-const { ExamCreationLog, ExamDeletionLog, ExamArchiveLog, ExamRegisterLog, ExamUnregisterLog } = require("../models/Log");
+const { ExamCreationLogs, ExamDeletionLogs, ExamArchiveLogs, ExamUnregisterLogs, ExamRegisterLogs } = require("../models/Log");
 
 const router = new express.Router();
 
@@ -25,7 +25,7 @@ router.post('/', isStaff, async (req, res) => {
 			title
 		});
 		await exam.save();
-		const log = new ExamCreationLog({
+		const log = new ExamCreationLogs({
 			user: req.user._id,
 			exam: exam._id,
 			exam_date: exam.start_at
@@ -44,7 +44,7 @@ router.delete('/:id', isStaff, async (req, res) => {
 		if (!exam) {
 			return res.status(404).send();
 		}
-		const log = new ExamDeletionLog({
+		const log = new ExamDeletionLogs({
 			user: req.user._id,
 			exam: exam._id,
 			exam_date: exam.start_at
@@ -95,7 +95,7 @@ router.post('/:id/register', async (req, res) => {
 		exam.watchers.push(req.user._id);
 		await exam.save();
 		await exam.populate('watchers');
-		const log = new ExamRegisterLog({
+		const log = new ExamRegisterLogs({
 			user: req.user._id,
 			exam: exam._id,
 			exam_date: exam.start_at
@@ -121,7 +121,7 @@ router.post('/:id/unregister', async (req, res) => {
 		exam.watchers = exam.watchers.filter(watcher => !watcher.equals(req.user._id));
 		await exam.save();
 		await exam.populate('watchers');
-		const log = new ExamUnregisterLog({
+		const log = new ExamUnregisterLogs({
 			user: req.user._id,
 			exam: exam._id,
 			exam_date: exam.start_at
@@ -158,7 +158,7 @@ router.post('/:id/archived', isStaff, async (req, res) => {
 			await watcher.save();
 		}
 		await exam.save();
-		const log = new ExamArchiveLog({
+		const log = new ExamArchiveLogs({
 			user: req.user._id,
 			exam: exam._id,
 			exam_date: exam.start_at
