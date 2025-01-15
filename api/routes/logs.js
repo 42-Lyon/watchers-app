@@ -1,8 +1,3 @@
-// routes get avec filtre sur le type d'event (possible de plusieurs types)
-// date debut et date fin
-// pagination
-// sort custom possible
-
 const mongoose = require('mongoose');
 const express = require('express');
 const {Logs} = require('../models/Log');

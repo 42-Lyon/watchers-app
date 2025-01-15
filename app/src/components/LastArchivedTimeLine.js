@@ -1,15 +1,12 @@
 import useLogs from "../hooks/useLogs";
-import { Card, Flex } from "@chakra-ui/react";
+import { Card } from "@chakra-ui/react";
 import { TimelineConnector, TimelineContent, TimelineDescription, TimelineItem, TimelineRoot, TimelineTitle } from "./ui/timeline";
-import { FaBoxArchive } from "react-icons/fa6";
 import { Tag } from "./ui/tag";
 import { Avatar } from "./ui/avatar";
 
 export default function LastArchivedTimeLine({ ...props }) {
 
-	const {logs} = useLogs('ExamArchiveLogs', 1, 5);
-
-	console.log(logs);
+	const {logs} = useLogs({event_types: 'ExamArchiveLogs'}, 1, 5);
 
 	return (
 		<Card.Root {...props} w='100%' h='100%'>

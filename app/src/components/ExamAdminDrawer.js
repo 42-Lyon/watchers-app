@@ -9,6 +9,7 @@ import ProfileCard from "./ProfileCard";
 import ExamSlot from "./ExamSlot";
 import { Button } from "./ui/button";
 import ConfirmDialog from "./ConfirmDialog";
+import ExamsLogs from "./ExamsLogs";
 
 export default function ExamAdminDrawer({open, setOpen, exam}) {
 	const [loading, setLoading] = useState(false);
@@ -90,7 +91,7 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 	}
 
 	return (
-	<DrawerRoot open={open} onOpenChange={(e) => setOpen(e.open)}>
+	<DrawerRoot open={open} onOpenChange={(e) => setOpen(e.open)} size='md'>
       <DrawerBackdrop />
       <DrawerContent minW='25vw'>
         <DrawerHeader>
@@ -117,7 +118,7 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 					<Button
 						colorPalette='red' size='sm' w='100%' mt='8px'
 						onClick={() => unregisterWatcher(watcher)}
-						 variant='subtle'
+						variant='subtle'
 					><FaXmark/> Remove</Button>
 				</ProfileCard>
 			))}
@@ -136,6 +137,7 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 					</Button>
 				</UserSearchInput>
 			}
+			<ExamsLogs exam={exam} mt='16px'/>
         </DrawerBody>
         <DrawerFooter>
 			{

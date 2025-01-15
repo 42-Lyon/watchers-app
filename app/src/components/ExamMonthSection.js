@@ -11,7 +11,7 @@ export default function ExamMonthSection({ year, month, exams }) {
 			<Grid
 				width='100%'
 				gap='8px'
-				templateColumns="repeat(3, 1fr)"
+				templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(2, 1fr)", "repeat(3, 1fr)"]}
 			>
 				{exams.map((exam, i) => (
 					<ExamCard key={exam._id} exam={exam}/>

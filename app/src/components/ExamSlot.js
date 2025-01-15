@@ -55,16 +55,28 @@ export default function ExamSlot({ watcher, exam, disabled, ...props }) {
 		</Button>
 	)}
 
-	if (watcher && IAmWatcher && (hover || isLoading)) {
+	if (watcher && IAmWatcher) {
 		return (
-			<Button minHeight='40px' width='100%' colorPalette='red' onMouseLeave={() => setIsHover(false)} onClick={unregister} loading={isLoading}>
-				<FaXmark/> Unregister
+			<Button minHeight='40px' width='100%' colorPalette='blue' _hover={{ colorPalette: "red" }} onClick={unregister} loading={isLoading}
+				onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}
+			>
+				{
+					!hover ?
+					<>
+						<Avatar size='2xs' name={watcher.login} src={watcher.image_url} css={watcher.nb_watch === 0 && ringCss} colorPalette='blue' />
+						{watcher.login}
+					</>
+					:
+					<>
+						<FaXmark/> Unregister
+					</>
+				}
 			</Button>
 		)
 	}
 	if (watcher) {
 		return (
-			<Center minHeight='40px' width='100%' borderRadius='sm' gap='8px' bg={IAmWatcher ? 'bg.info' : 'bg.emphasized'} onMouseEnter={() => setIsHover(true)}>
+			<Center minHeight='40px' width='100%' borderRadius='sm' gap='8px' bg={IAmWatcher ? 'bg.info' : 'bg.emphasized'}>
 				<Avatar size='2xs' name={watcher.login} src={watcher.image_url} css={watcher.nb_watch === 0 && ringCss} colorPalette='blue' />
 				{watcher.login}
 			</Center>

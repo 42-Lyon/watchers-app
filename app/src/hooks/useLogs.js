@@ -1,12 +1,16 @@
 import config from "../config"
 import { useEffect, useState } from "react";
 
-export default function useLogs(eventTypes, defaultPage = 1, pageSize = 10) {
+export default function useLogs(query, defaultPage = 1, pageSize = 10) {
 
 	const [logs, setLogs] = useState([]);
 
 	const fetchLogs = async () => {
-		const response = await fetch(`${config.apiUrl}/logs?query[event_types]=${eventTypes}&page=${defaultPage}&pageSize=${pageSize}`, {
+		let queryString = '';
+		for (const key in query) {
+			queryString += `&query[${key}]=${query[key]}`;
+		}
+		const response = await fetch(`${config.apiUrl}/logs?page=${defaultPage}&pageSize=${pageSize}` + queryString, {
 			credentials: 'include'
 		});
 		if (response.ok)
