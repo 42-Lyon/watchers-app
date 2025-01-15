@@ -5,7 +5,7 @@ import GroupBadge from "./GroupBadge";
 import { useMe } from "../context/useMe";
 import { Alert } from "./ui/alert";
 import ExamStatus from "./ExamStatus";
-import ExamAdminDrawer from "./ExamAdminDrawer";
+import ExamDrawer from "./ExamDrawer";
 import { useState } from "react";
 
 export default function ExamCard({ exam, ...props }) {
@@ -18,7 +18,7 @@ export default function ExamCard({ exam, ...props }) {
 
 	if (me)
 	return (
-		<Card.Root w='100%' {...props} borderColor={IAmWatcher && 'border.info'} _hover={me.is_staff ? {bg: 'bg.muted', borderColor: 'fg.info'}: {}} onClick={me.is_staff && (() => setOpen(true))}>
+		<Card.Root w='100%' {...props} borderColor={IAmWatcher && 'border.info'} _hover={me.is_staff ? {bg: 'bg.muted', borderColor: 'fg.info'}: {}} onClick={(() => setOpen(true))}>
 			<Card.Header>
 				<Card.Title display='flex' alignItems='center' justifyContent='space-between' gap='4px'>
 					<Flex alignItems='center' gap='4px'>
@@ -51,15 +51,15 @@ export default function ExamCard({ exam, ...props }) {
 				}
 			</Card.Body>
 			<Card.Footer>
-			<Flex
-				gap='8px'
-			>
-				{exam.authorized_groups.map((group) => (
-					<GroupBadge key={group+exam._id} group={group}/>
-				))}
-			</Flex>
+				<Flex
+					gap='8px'
+				>
+					{exam.authorized_groups.map((group) => (
+						<GroupBadge key={group+exam._id} group={group}/>
+					))}
+				</Flex>
 			</Card.Footer>
-			<ExamAdminDrawer open={open} setOpen={setOpen} exam={exam} />
+			<ExamDrawer open={open} setOpen={setOpen} exam={exam} isAdmin={me.is_staff} />
 		</Card.Root>
 	);
 }

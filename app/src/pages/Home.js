@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import ExamCreationForm from "../components/ExamCreationForm";
 import { useMe } from "../context/useMe";
 import LeftNavTemplate from "../templates/LeftNavTemplate";
+import { EmptyState } from "../components/ui/empty-state";
+import { FaEyeSlash } from "react-icons/fa6";
+import { Center } from "@chakra-ui/react";
 
 export default function Home() {
 
@@ -39,6 +42,18 @@ export default function Home() {
 					)
 				} />
 			))}
+			{ months.length === 0 &&
+				<Center
+					h='100%'
+					w='100%'
+				>
+					<EmptyState
+						icon={<FaEyeSlash />}
+						title="No exams planned"
+						description="It seems there are no exams planned for the moment. Check back later or contact an administrator if you think that's an issue."
+					/>
+				</Center>
+			}
 			{ me.is_staff && <ExamCreationForm onCreate={create} />}
 		</LeftNavTemplate>
 	);

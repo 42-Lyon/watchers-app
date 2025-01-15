@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import ProfileCard from "../../components/ProfileCard";
 import { Button } from "../../components/ui/button";
-import { Separator, Stack } from "@chakra-ui/react";
+import { Separator, Stack, Link as CLink } from "@chakra-ui/react";
 import { FaClockRotateLeft, FaHouse, FaRightFromBracket } from "react-icons/fa6";
 import config from "../../config";
 
@@ -39,10 +39,15 @@ export default function Sidebar({ me, ...props }) {
 				</Stack>
 				<Separator w='100%' />
 			</Stack>
-			<Button
-				w='100%' variant='solid' colorPalette='red' display='flex' justifyContent='space-between'
-				as={Link} to={`${config.apiUrl}/auth/logout`}
-			>Logout <FaRightFromBracket/></Button>
+			<Stack w='100%' alignItems='center'>
+				<Button
+					w='100%' variant='solid' colorPalette='red' display='flex' justifyContent='space-between'
+					as={Link} to={`${config.apiUrl}/auth/logout`}
+				>Logout <FaRightFromBracket/></Button>
+				<CLink fontSize='xs' variant="underline">
+					Privacy Policy
+				</CLink>
+			</Stack>
 		</Stack>
 	);
 }

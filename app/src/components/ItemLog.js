@@ -12,11 +12,11 @@ const getIcon = (event) => {
 }
 
 const getColor = (event) => {
-	if (event === 'ExamArchiveLogs') return 'green.500'
-	if (event === 'ExamRegisterLogs' || event === 'ExamForceRegisterLogs') return 'blue.500'
-	if (event === 'ExamUnregisterLogs' || event === 'ExamForceUnregisterLogs' ) return 'red.500'
-	if (event === 'ExamCreationLogs') return 'green.500'
-	if (event === 'ExamDeletionLogs') return 'red.500'
+	if (event === 'ExamArchiveLogs') return 'green'
+	if (event === 'ExamRegisterLogs' || event === 'ExamForceRegisterLogs') return 'blue'
+	if (event === 'ExamUnregisterLogs' || event === 'ExamForceUnregisterLogs' ) return 'red'
+	if (event === 'ExamCreationLogs') return 'green'
+	if (event === 'ExamDeletionLogs') return 'red'
 }
 
 const getTitle = (event) => {
@@ -33,7 +33,7 @@ export default function ItemLog({ log, ...props }) {
 	return (
 		<TimelineItem {...props}>
 			<TimelineConnector
-				bg={getColor(log.__t)}
+				bg={getColor(log.__t)+'.500'}
 			>
 				{getIcon(log.__t)}
 			</TimelineConnector>
@@ -45,13 +45,13 @@ export default function ItemLog({ log, ...props }) {
 				{
 					log.__t === 'ExamForceRegisterLogs' && 
 					<Text>
-						<Tag as='span'>@{log.user.login}</Tag> has been force-registered for the exam
+						The watcher <Tag as='span'>@{log.forced_user.login}</Tag> has been registered
 					</Text>
 				}
 				{
 					log.__t === 'ExamForceUnregisterLogs' && 
 					<Text>
-						<Tag as='span'>@{log.user.login}</Tag> has been force-unregistered for the exam
+						The watcher <Tag as='span'>@{log.forced_user.login}</Tag> has been unregistered
 					</Text>
 				}
 			</TimelineContent>

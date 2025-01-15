@@ -11,7 +11,7 @@ import { Button } from "./ui/button";
 import ConfirmDialog from "./ConfirmDialog";
 import ExamsLogs from "./ExamsLogs";
 
-export default function ExamAdminDrawer({open, setOpen, exam}) {
+export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 	const [loading, setLoading] = useState(false);
 
 	const deleteExam = async () => {
@@ -109,41 +109,45 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 			</DrawerTitle>
         </DrawerHeader>
         <DrawerBody gap='8px' display='flex' flexDir='column'>
-			<Flex gap='8px' alignItems='center' paddingBottom='8px'>
-				<Heading size='md'>Watchers</Heading>
-				<Text color='fg.muted' fontSize='sm'>{exam.watchers.length}/{exam.nb_slots}</Text>
-			</Flex>
-			{exam.watchers.map((watcher) => (
-				<ProfileCard key={watcher.login} user={watcher}>
-					<Button
-						colorPalette='red' size='sm' w='100%' mt='8px'
-						onClick={() => unregisterWatcher(watcher)}
-						variant='subtle'
-					><FaXmark/> Remove</Button>
-				</ProfileCard>
-			))}
-			{
-				exam.nb_slots - exam.watchers.length > 0 && new Array(exam.nb_slots - exam.watchers.length).fill(0).map((_, i) => (
-					<ExamSlot key={i} disabled/>
-				))
-			}
-			{
-				exam.watchers.length < exam.nb_slots &&
-				<UserSearchInput
+			{ isAdmin &&
+				<>
+				<Flex gap='8px' alignItems='center' paddingBottom='8px'>
+					<Heading size='md'>Watchers</Heading>
+					<Text color='fg.muted' fontSize='sm'>{exam.watchers.length}/{exam.nb_slots}</Text>
+				</Flex>
+				{exam.watchers.map((watcher) => (
+					<ProfileCard key={watcher.login} user={watcher}>
+						<Button
+							colorPalette='red' size='sm' w='100%' mt='8px'
+							onClick={() => unregisterWatcher(watcher)}
+							variant='subtle'
+							><FaXmark/> Remove</Button>
+					</ProfileCard>
+				))}
+				{
+					exam.nb_slots - exam.watchers.length > 0 && new Array(exam.nb_slots - exam.watchers.length).fill(0).map((_, i) => (
+						<ExamSlot key={i} disabled/>
+					))
+				}
+				{
+					exam.watchers.length < exam.nb_slots &&
+					<UserSearchInput
 					onValid={registerWatcher}
-				>
-					<Button variant="outline" size="sm">
-						<FaPlus/> Add a watcher
-					</Button>
-				</UserSearchInput>
+					>
+						<Button variant="outline" size="sm">
+							<FaPlus/> Add a watcher
+						</Button>
+					</UserSearchInput>
+				}
+				</>
 			}
 			<ExamsLogs exam={exam} mt='16px'/>
         </DrawerBody>
         <DrawerFooter>
 			{
-				exam.end_at < new Date() &&
+				isAdmin && exam.end_at < new Date() &&
 				<ConfirmDialog
-					text={`Are you sure you want to archive this exam (${exam.start_at.toLocaleDateString('fr-FR')})? This action cannot be undone.`}
+				text={`Are you sure you want to archive this exam (${exam.start_at.toLocaleDateString('fr-FR')})? This action cannot be undone.`}
 					onConfirm={archiveExam}
 					confirmColor='green'
 				>
@@ -155,15 +159,18 @@ export default function ExamAdminDrawer({open, setOpen, exam}) {
 					</Button>
 				</ConfirmDialog>
 			}
-			<ConfirmDialog
-				text={`Are you sure you want to delete this exam (${exam.start_at.toLocaleDateString('fr-FR')})? This action cannot be undone.`}
-				onConfirm={deleteExam}
-				confirmColor='red'
-			>
-				<Button colorPalette="red" loading={loading} >
-					<FaTrashCan/> Delete
-				</Button>
-			</ConfirmDialog>
+			{
+				isAdmin &&
+				<ConfirmDialog
+					text={`Are you sure you want to delete this exam (${exam.start_at.toLocaleDateString('fr-FR')})? This action cannot be undone.`}
+					onConfirm={deleteExam}
+					confirmColor='red'
+				>
+					<Button colorPalette="red" loading={loading} >
+						<FaTrashCan/> Delete
+					</Button>
+				</ConfirmDialog>
+			}
           <DrawerActionTrigger asChild>
             <Button variant="outline">Close</Button>
           </DrawerActionTrigger>
