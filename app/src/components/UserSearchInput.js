@@ -5,7 +5,7 @@ import { Avatar } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { DialogActionTrigger, DialogBody, DialogCloseTrigger, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from "./ui/dialog";
 
-export default function UserSearchInput({children, onValid, ...props}) {
+export default function UserSearchInput({ children, onValid }) {
 	const [search, setSearch] = useState('');
 	const [users, setUsers] = useState([]);
 	const [open, setOpen] = useState(false);

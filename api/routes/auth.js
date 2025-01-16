@@ -41,7 +41,7 @@ router.get('/42/callback', async (req, res) => {
 		return res.status(500).send('Error saving session');
 	}
 
-	return res.status(200).redirect('http://localhost:3001');
+	return res.status(200).redirect(process.env.FRONTEND_URL);
 
 });
 
@@ -52,7 +52,7 @@ router.get('/logout', isLoggedIn, async (req, res) => {
         console.error(e);
         return res.status(500).send('Error logging out');
     }
-	return res.status(200).send();
+	return res.status(200).redirect(process.env.FRONTEND_URL);
 });
 
 module.exports = router;

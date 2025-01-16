@@ -8,7 +8,7 @@ import { EmptyState } from "../components/ui/empty-state";
 import { FaEyeSlash } from "react-icons/fa6";
 import { Center } from "@chakra-ui/react";
 
-export default function Home() {
+export default function Exams() {
 
 	const { exams, create } = useExams();
 	const { me } = useMe();

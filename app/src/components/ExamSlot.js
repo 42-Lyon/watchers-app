@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { toaster } from "./ui/toaster";
 
-export default function ExamSlot({ watcher, exam, disabled, ...props }) {
+export default function ExamSlot({ watcher, exam, disabled }) {
 
 	const { me } = useMe();
 	const [hover, setIsHover] = useState(false);

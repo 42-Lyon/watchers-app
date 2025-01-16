@@ -31,6 +31,7 @@ export default function LineExamsChart({ ...props }) {
 
 	useEffect(() => {
 		fetchData();
+		// eslint-disable-next-line
 	}	, []);
 
 	const [color] = useToken("colors", ["blue.500"]);

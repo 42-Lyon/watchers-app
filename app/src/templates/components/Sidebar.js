@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import ProfileCard from "../../components/ProfileCard";
 import { Button } from "../../components/ui/button";
 import { Separator, Stack, Link as CLink } from "@chakra-ui/react";
-import { FaClockRotateLeft, FaHouse, FaRightFromBracket } from "react-icons/fa6";
+import { FaCalendarDays, FaClockRotateLeft, FaRightFromBracket } from "react-icons/fa6";
 import config from "../../config";
 
 export default function Sidebar({ me, ...props }) {
@@ -27,7 +27,7 @@ export default function Sidebar({ me, ...props }) {
 						as={Link} to='/'
 						disabled={path === '/'}
 					>
-						Exams <FaHouse/>
+						Exams <FaCalendarDays/>
 					</Button>
 					<Button
 						w='100%' variant='ghost' display='flex' justifyContent='space-between'

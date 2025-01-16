@@ -1,8 +1,4 @@
-import { FaClockRotateLeft, FaHouse, FaRightFromBracket } from "react-icons/fa6";
-import ProfileCard from "../components/ProfileCard";
-import { Button, Flex, Separator, Stack } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import config from "../config";
+import { Flex, Stack } from "@chakra-ui/react";
 import Sidebar from "./components/Sidebar";
 import NavDrawer from "./components/NavDrawer";
 
