@@ -42,7 +42,7 @@ export default function Sidebar({ me, ...props }) {
 			<Stack w='100%' alignItems='center'>
 				<Button
 					w='100%' variant='solid' colorPalette='red' display='flex' justifyContent='space-between'
-					as={Link} to={`${config.apiUrl}/auth/logout`}
+					as='a' href={`${config.apiUrl}/auth/logout`}
 				>Logout <FaRightFromBracket/></Button>
 				<CLink fontSize='xs' variant="underline">
 					Privacy Policy

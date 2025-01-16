@@ -1,0 +1,58 @@
+services:
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx/templates
+    ports:
+      - "8080:8080"
+    environment:
+      - NGINX_HOST=$NGINX_HOST
+      - NGINX_PORT=$NGINX_PORT
+    networks:
+      - main
+
+  api:
+    build:
+      context: ./api
+    environment:
+      - CLIENT_ID=${CLIENT_ID}
+      - CLIENT_SECRET=${CLIENT_SECRET}
+      - CALLBACK_URL=${CALLBACK_URL}
+      - SESSION_ID=${SESSION_ID}
+      - SPREADSHEET_ID=${SPREADSHEET_ID}
+      - MONGO_URI=${MONGO_URI}
+      - FRONTEND_URL=${FRONTEND_URL}
+    networks:
+      - main
+      - db
+    restart: always
+  
+  app:
+    build:
+      context: ./app
+      args:
+        REACT_APP_BACKEND_URL: ${REACT_APP_BACKEND_URL}
+    networks:
+      - main
+    restart: always
+
+  mongo:
+    image: mongo
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - db
+    ports:
+      - "27017:27017"
+    restart: always
+
+
+volumes:
+  mongo-data:
+
+networks:
+  main:
+    driver: bridge
+  db:
+    driver: bridge
+
