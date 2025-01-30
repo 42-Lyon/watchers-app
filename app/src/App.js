@@ -2,6 +2,7 @@ import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router-d
 import './App.css';
 import Login from './pages/Login';
 import Exams from './pages/Exams';
+import Users from './pages/Users';
 import { ExamsProvider } from './context/useExams';
 import { Toaster } from './components/ui/toaster';
 import Statistics from './pages/Statistics';
@@ -23,6 +24,11 @@ function App() {
             <>
               <Route path='/statistics' element={<Statistics/>} />
               <Route path='/' element={<Exams/>} />
+              { me.is_staff &&
+                <>
+                  <Route path='/users' element={<Users/>} />
+                </>
+              }
             </>
           }
           <Route path='/login' element={me ? <Navigate to={'/'}/> : <Login/>} />

@@ -25,6 +25,7 @@ router.get('/42/callback', async (req, res) => {
 		{ login: me.login },
 		{
 			login: me.login,
+			is_staff: me['staff?'],
 			firstname: me.first_name,
 			lastname: me.last_name,
 			image_url: me.image.link,

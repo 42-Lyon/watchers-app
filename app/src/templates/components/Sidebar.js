@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import ProfileCard from "../../components/ProfileCard";
 import { Button } from "../../components/ui/button";
-import { Separator, Stack, Link as CLink } from "@chakra-ui/react";
-import { FaCalendarDays, FaClockRotateLeft, FaRightFromBracket } from "react-icons/fa6";
+import { Separator, Stack, Link as CLink, HStack } from "@chakra-ui/react";
+import { FaCalendarDays, FaClockRotateLeft, FaRightFromBracket, FaUsers } from "react-icons/fa6";
 import config from "../../config";
+import GroupBadge from "../../components/GroupBadge";
 
 export default function Sidebar({ me, ...props }) {
 
@@ -20,7 +21,11 @@ export default function Sidebar({ me, ...props }) {
 		>
 			<Stack w='100%'>
 				<ProfileCard w='100%' user={me}/>
-				<Separator w='100%' />
+				<HStack>
+					<Separator flex="1" />
+					<GroupBadge flexShrink="0" group="Watcher" />
+					<Separator flex="25" />
+				</HStack>
 				<Stack w='100%'>
 					<Button
 						w='100%' variant='ghost' display='flex' justifyContent='space-between'
@@ -37,7 +42,24 @@ export default function Sidebar({ me, ...props }) {
 						Statistics <FaClockRotateLeft />
 					</Button>
 				</Stack>
-				<Separator w='100%' />
+				{ me.is_staff && 
+					<>
+						<HStack>
+							<Separator flex="1" />
+							<GroupBadge flexShrink="0" group="Staff" />
+							<Separator flex="25" />
+						</HStack>
+						<Stack w='100%'>
+							<Button
+								w='100%' variant='ghost' display='flex' justifyContent='space-between'
+								as={Link} to='/users'
+								disabled={path.startsWith('/users')}
+							>
+								Users <FaUsers/>
+							</Button>
+						</Stack>
+					</>
+				}
 			</Stack>
 			<Stack w='100%' alignItems='center'>
 				<Button

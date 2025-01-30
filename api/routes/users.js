@@ -77,4 +77,18 @@ router.get('/:login/exams', async (req, res) => {
 	}
 });
 
+router.get('/:login/staff', isStaff, async (req, res) => {
+	const login = req.params.login;
+	try {
+		const user = await Users.findOne({ login });
+		if (!user) {
+			return res.status(404).send();
+		}
+		return res.status(200).send(user.is_staff);
+	}
+	catch(e) {
+		return res.status(400).send();
+	}
+});
+
 module.exports = router;
