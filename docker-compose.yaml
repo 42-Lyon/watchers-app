@@ -48,6 +48,8 @@ services:
     networks:
       - db
     restart: always
+    ports:
+      - "27018:27017"
 
 volumes:
   mongo-data:
