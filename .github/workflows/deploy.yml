@@ -9,6 +9,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    env:
+      BACKEND_URL: https://tutors.bastienw.fr/api
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3

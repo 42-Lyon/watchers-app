@@ -7,7 +7,7 @@ upstream app {
 }
 
 server {
-	listen $NGINX_PORT;
+	listen 8080;
 	server_name $NGINX_HOST;
 
 	location /api/ {
