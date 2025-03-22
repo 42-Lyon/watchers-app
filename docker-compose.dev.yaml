@@ -4,10 +4,9 @@ services:
     volumes:
       - ./nginx:/etc/nginx/templates
     ports:
-      - "8080:8080"
+      - "8080:80"
     environment:
       - NGINX_HOST=$NGINX_HOST
-      - NGINX_PORT=$NGINX_PORT
     networks:
       - main
     restart: always

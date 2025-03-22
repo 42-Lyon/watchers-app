@@ -1,14 +1,17 @@
 const sheetNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
 
-// 2024
-// const spreadsheetId = "1fL69sCe8gwaDTcMw1TS5MAGmFiFb8w31qE2cn1Z8UBk"
-// const year = 2024
+const datas = [
+	{
+		year: 2024,
+		spreadsheetId: "1fL69sCe8gwaDTcMw1TS5MAGmFiFb8w31qE2cn1Z8UBk",
+	},
+	{
+		year: 2025,
+		spreadsheetId: "1SbYQ5tCjiJtsNk4TpeIncDT6p1w0gajS2Fy0Oo0GhVY",
+	}
+]
 
-// 2025
-const spreadsheetId = "1SbYQ5tCjiJtsNk4TpeIncDT6p1w0gajS2Fy0Oo0GhVY"
-const year = 2025
-
-const sessionCookie = 'IntraWatcher.sid=s%3AexYJlcDrPqZElJoiLOrOLYeanBUoI3_R.qD1A2y2bsuPXFCDLfTAi%2FM%2Fzmus9iTlLVEYoyjy%2FbG8'
+const sessionCookie = 'IntraWatcher.sid=s%3ALXS8bxrq_mdSMHmBmmq9bNov2abVHoi_.mt7wQQs1y5Zpe3WW1bThHfigWacqbdQgxmIIgj0mVXU'
 
 async function postExam(exam) {
 	console.log('post exam', exam.start_at);
@@ -37,6 +40,21 @@ async function postUser(login) {
 		const data = await res.json();
 		return data;
 	}
+	console.error(res.status, await res.text());
+	return null;
+}
+
+async function getUser(login) {
+	const res = await fetch(`https://tutors.bastienw.fr/api/users?page=1&pageSize=50&login=${login}`, {
+		headers: {
+			'Cookie': sessionCookie
+		},
+	});
+	const data = await res.json();
+	if (data.length) 
+		return data[0];
+	const user = await postUser(login);
+	return user;
 }
 
 async function fetchExams() {
@@ -63,27 +81,37 @@ async function postWatcher(examId, login) {
 }
 
 async function postArchivedExam(examId) {
-	console.log('archiving exam', examId);
-	const res = await fetch(`https://tutors.bastienw.fr/api/exams/${examId}/archive`, {
+	const res = await fetch(`https://tutors.bastienw.fr/api/exams/${examId}/archived`, {
 		method: 'POST',
 		headers: {
 			'Cookie': sessionCookie
 		},
 	});
+	if (res.ok) {
+		console.log('archived exam', examId);
+	}
+	else {
+		console.error(res.status, await res.text());
+	}
 }
 
-async function createExam(date, day, watcher1, watcher2) {
+let total = 0;
+
+async function createExam(date, day, watcher1, watcher2, year) {
+	total++;
+	console.log('create exam', date, day, watcher1, watcher2);
 	const watchers = []
 	if (watcher1) {
-		const user = await postUser(watcher1);
+		const user = await getUser(watcher1);
 		if (user)
 			watchers.push(user);
 	}
 	if (watcher2) {
-		const user = await postUser(watcher2);
+		const user = await getUser(watcher2);
 		if (user)
 			watchers.push(user);
 	}
+	console.log('watchers', watchers.map(w => w.login));
 	const start_at = new Date(year, date.split('/')[1]-1, date.split('/')[0], day === 'MARDI' ? 10 : 14)
 	const exams = await fetchExams();
 	const examExists = exams.find(exam => new Date(exam.start_at).getTime() === start_at.getTime());
@@ -99,7 +127,6 @@ async function createExam(date, day, watcher1, watcher2) {
 		title: day === 'VENDREDI' ? "Alone in the Dark" : "",
 	});
 
-	console.log('watchers', watchers);
 	for (const watcher of watchers) {
 		await postWatcher(exam._id, watcher.login);
 	}
@@ -107,20 +134,28 @@ async function createExam(date, day, watcher1, watcher2) {
 	if (is_archived) {
 		await postArchivedExam(exam._id);
 	}
-
+	
+	console.log('\n\n');
 }
 
 async function extractExams() {
 	
-	for (const sheetName of sheetNames) {
-		const RANGE = sheetName+"!C3:K";
-		const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${RANGE}?key=${process.env.GOOGLE_API_KEY}`;
-		const res = await fetch(url);
-		const data = await res.json();
-		for (let i = 0; i < data.values[0].length; i++) {
-			await createExam(data.values[0][i], data.values[1][i], data.values[2][i], data.values[3][i]);
+	for (const sheet of datas) {
+		const year = sheet.year;
+		const spreadsheetId = sheet.spreadsheetId;
+		for (const sheetName of sheetNames) {
+			const RANGE = sheetName+"!C3:K";
+			const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${RANGE}?key=${process.env.GOOGLE_API_KEY}`;
+			const res = await fetch(url);
+			const data = await res.json();
+			console.log(data, url)
+			for (let i = 0; i < data.values[0].length; i++) {
+				await createExam(data.values[0][i], data.values[1][i], data.values[2][i], data.values[3][i], year);
+			}
 		}
 	}
 }
 
 extractExams()
+	.then(() => console.log('done', total))
+	.catch(console.error);
