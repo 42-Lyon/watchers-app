@@ -69,13 +69,13 @@ router.post('/', isStaff, async (req, res) => {
 			exam_date: exam.start_at
 		});
 		log.save();
-		if (is_archived) {
-			const log = new ExamArchiveLogs({
+		if (exam.is_archived) {
+			const achive_log = new ExamArchiveLogs({
 				user: req.user._id,
 				exam: exam._id,
 				exam_date: exam.start_at
 			});
-			log.save();
+			achive_log.save();
 		}
 		return res.status(201).send(exam);
 	}
