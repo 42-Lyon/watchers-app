@@ -12,10 +12,11 @@ const datas = [
 ]
 
 const sessionCookie = `IntraWatcher.sid=${process.env.INTRA_WATCHER_SESSION}`;
+const apiUrl = 'https://tutors.bastienw.fr/api';
 
 async function postExam(exam) {
 	console.log('post exam', exam.start_at);
-	const res = await fetch('https://tutors.bastienw.fr/api/exams', {
+	const res = await fetch(`${apiUrl}/exams`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -28,37 +29,38 @@ async function postExam(exam) {
 }
 
 async function postUser(login) {
-	const res = await fetch('https://tutors.bastienw.fr/api/users', {
+
+	const res = await fetch(`${apiUrl}/users`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			'Cookie': sessionCookie
 		},
-		body: JSON.stringify({ login }),
+		body: JSON.stringify({ login: login.toLowerCase() }),
 	});
 	if (res.ok) {
 		const data = await res.json();
 		return data;
 	}
-	console.error(res.status, await res.text());
+	console.error('fail create user', login, res.statusText);
 	return null;
 }
 
 async function getUser(login) {
-	const res = await fetch(`https://tutors.bastienw.fr/api/users?page=1&pageSize=50&login=${login}`, {
+	const res = await fetch(`${apiUrl}/users?page=1&pageSize=100&login=${login}`, {
 		headers: {
 			'Cookie': sessionCookie
 		},
 	});
 	const data = await res.json();
-	if (data.length) 
+	if (res.ok && data.length) 
 		return data[0];
 	const user = await postUser(login);
 	return user;
 }
 
 async function fetchExams() {
-	const res = await fetch('https://tutors.bastienw.fr/api/exams', {
+	const res = await fetch(`${apiUrl}/exams`, {
 		headers: {
 			'Cookie': sessionCookie
 		},
@@ -70,7 +72,7 @@ async function fetchExams() {
 
 async function postWatcher(examId, login) {
 	console.log('register watcher', login, 'for exam', examId);
-	const res = await fetch(`https://tutors.bastienw.fr/api/exams/${examId}/watchers`, {
+	const res = await fetch(`${apiUrl}/exams/${examId}/watchers`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -81,7 +83,7 @@ async function postWatcher(examId, login) {
 }
 
 async function postArchivedExam(examId) {
-	const res = await fetch(`https://tutors.bastienw.fr/api/exams/${examId}/archived`, {
+	const res = await fetch(`${apiUrl}/exams/${examId}/archived`, {
 		method: 'POST',
 		headers: {
 			'Cookie': sessionCookie
@@ -148,7 +150,6 @@ async function extractExams() {
 			const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${RANGE}?key=${process.env.GOOGLE_API_KEY}`;
 			const res = await fetch(url);
 			const data = await res.json();
-			console.log(data, url)
 			for (let i = 0; i < data.values[0].length; i++) {
 				await createExam(data.values[0][i], data.values[1][i], data.values[2][i], data.values[3][i], year);
 			}
