@@ -77,7 +77,7 @@ export const ExamsProvider = ({ children }) => {
 	};
 
 	const archive = async (examId) => {
-		const archived = await fetch(`${config.apiUrl}/exams/${examId}/archived`, {
+		const archived = await fetch(`${config.apiUrl}/exams/${examId}/archived?log_sheet=true`, {
 			method: 'POST',
 			credentials: 'include',
 		});

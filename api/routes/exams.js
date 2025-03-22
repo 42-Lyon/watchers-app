@@ -186,7 +186,9 @@ router.post('/:id/archived', isStaff, async (req, res) => {
 				watcher.last_watch = exam.start_at;
 			watcher.nb_watch++;
 			try {
-				await insertRow(watcher.login, exam.start_at);
+				if (req.query.log_sheet) {
+					await insertRow(watcher.login, exam.start_at);
+				}
 			}
 			catch {
 				return res.status(500).send("Error while updating the spreadsheet");
