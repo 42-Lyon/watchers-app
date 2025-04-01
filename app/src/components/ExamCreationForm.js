@@ -1,13 +1,13 @@
 import { createListCollection, DialogCloseTrigger, Fieldset, Flex, Input, SelectLabel, SelectRoot } from "@chakra-ui/react";
 import { Button } from "./ui/button";
 import { DialogActionTrigger, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogRoot, DialogTitle, DialogTrigger } from "./ui/dialog";
-import { FaPlus } from "react-icons/fa6";
 import { Field } from "./ui/field";
 import { NumberInputField, NumberInputRoot } from "./ui/number-input";
 import { SelectContent, SelectItem, SelectTrigger, SelectValueText } from "./ui/select";
 import GroupBadge from "./GroupBadge";
 import { useState } from "react";
 import { toaster } from "./ui/toaster";
+import { LuPlus } from "react-icons/lu";
 
 const groups = createListCollection({
 	items: [
@@ -65,7 +65,7 @@ export default function ExamCreationForm({onCreate}) {
 				bottom='32px'
 				right='32px'
 			>
-				<FaPlus/> Create Exam
+				<LuPlus/> Create Exam
 			</Button>
 		</DialogTrigger>
       <DialogContent>

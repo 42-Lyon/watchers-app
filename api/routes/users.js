@@ -91,4 +91,36 @@ router.get('/:login/staff', isStaff, async (req, res) => {
 	}
 });
 
+router.delete('/:login', isStaff, async (req, res) => {
+	const login = req.params.login;
+	try {
+		const user = await Users.findOneAndDelete({ login });
+		if (!user) {
+			return res.status(404).send();
+		}
+		return res.status(204).send();
+	}
+	catch(e) {
+		console.error(e);
+		return res.status(400).send();
+	}
+});
+
+router.patch('/:login', isStaff, async (req, res) => {
+	const login = req.params.login;
+	
+	try {
+		const user = await Users.findOneAndUpdate({ login }, req.body);
+		if (!user) {
+			return res.status(404).send();
+		}
+		return res.send(user);
+	}
+	catch(e) {
+		console.error(e);
+		return res.status(400).send();
+	}
+});
+
+
 module.exports = router;

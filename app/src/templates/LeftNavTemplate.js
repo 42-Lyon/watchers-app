@@ -2,7 +2,7 @@ import { Flex, Stack } from "@chakra-ui/react";
 import Sidebar from "./components/Sidebar";
 import NavDrawer from "./components/NavDrawer";
 
-export default function LeftNavTemplate({ me, children }) {
+export default function LeftNavTemplate({ me, children, ...props }) {
 
 	return (
 		<Flex>
@@ -16,10 +16,11 @@ export default function LeftNavTemplate({ me, children }) {
 			/>
 
 			<Stack
-				h='100vh'
+				h='100dvh'
 				w={['100%','100%', '82%']}
 				padding='8px'
 				overflowY='auto'
+				{...props}
 			>
 				{children}
 			</Stack>

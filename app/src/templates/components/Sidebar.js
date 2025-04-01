@@ -2,9 +2,9 @@ import { Link } from "react-router-dom";
 import ProfileCard from "../../components/ProfileCard";
 import { Button } from "../../components/ui/button";
 import { Separator, Stack, Link as CLink, HStack } from "@chakra-ui/react";
-import { FaCalendarDays, FaClockRotateLeft, FaRightFromBracket, FaUsers } from "react-icons/fa6";
 import config from "../../config";
 import GroupBadge from "../../components/GroupBadge";
+import { LuCalendarDays, LuChartArea, LuLogOut, LuUsers } from "react-icons/lu";
 
 export default function Sidebar({ me, ...props }) {
 
@@ -32,14 +32,14 @@ export default function Sidebar({ me, ...props }) {
 						as={Link} to='/'
 						disabled={path === '/'}
 					>
-						Exams <FaCalendarDays/>
+						Exams <LuCalendarDays/>
 					</Button>
 					<Button
 						w='100%' variant='ghost' display='flex' justifyContent='space-between'
 						as={Link} to='/statistics'
 						disabled={path.startsWith('/statistics')}
 					>
-						Statistics <FaClockRotateLeft />
+						Statistics <LuChartArea />
 					</Button>
 				</Stack>
 				{ me.is_staff && 
@@ -55,7 +55,7 @@ export default function Sidebar({ me, ...props }) {
 								as={Link} to='/users'
 								disabled={path.startsWith('/users')}
 							>
-								Users <FaUsers/>
+								Users <LuUsers/>
 							</Button>
 						</Stack>
 					</>
@@ -65,7 +65,7 @@ export default function Sidebar({ me, ...props }) {
 				<Button
 					w='100%' variant='solid' colorPalette='red' display='flex' justifyContent='space-between'
 					as='a' href={`${config.apiUrl}/auth/logout`}
-				>Logout <FaRightFromBracket/></Button>
+				>Logout <LuLogOut/></Button>
 				<CLink fontSize='xs' variant="underline">
 					Privacy Policy
 				</CLink>

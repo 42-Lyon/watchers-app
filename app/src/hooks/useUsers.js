@@ -35,5 +35,23 @@ export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10)
 		setPage(number);
 	}
 
-	return { users, nextPage, prevPage, setPageNumber, nbPages, page };
+	const deleteUser = async (user) => {
+		const response = await fetch(`${config.apiUrl}/users/${user.login}`, {
+			method: 'DELETE',
+			credentials: 'include'
+		});
+		if (response.ok)
+			setUsers(users.filter(u => u._id !== user._id));
+	}
+
+	return { users: users.map(u => ({
+			...u,
+			delete: () => deleteUser(u)
+		})),
+		nextPage,
+		prevPage,
+		setPageNumber,
+		nbPages,
+		page
+	};
 }

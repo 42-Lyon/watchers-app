@@ -100,7 +100,6 @@ router.post('/:id/register', async (req, res) => {
 		if (!exam) {
 			return res.status(404).send();
 		}
-		const end_at = new Date(new Date(exam.start_at).setHours(new Date(exam.start_at).getHours() + exam.duration));
 		if (exam.watchers.length >= exam.nb_slots)
 			return res.status(400).send("No more slots available");
 		if (exam.watchers.includes(req.user._id))
@@ -126,8 +125,9 @@ router.post('/:id/register', async (req, res) => {
 				}
 			}
 		}
+
 		if (!watch_has_experience && req.user.nb_watch == 0 && !req.user.is_staff)
-			return res.status(400).send("You need to have at least one watch to register");
+			return res.status(400).send("At least one watcher must have already done a watch");
 		exam.watchers.push(req.user._id);
 		await exam.save();
 		await exam.populate('watchers');

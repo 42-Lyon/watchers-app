@@ -10,7 +10,7 @@ export default function LastArchivedTimeLine({ ...props }) {
 
 	return (
 		<Card.Root {...props} w='100%' h='100%'>
-			<Card.Body display='flex' flexDir='column' overflow='auto'>
+			<Card.Body display='flex' flexDir='column' overflow='auto' gap='2'>
 				<Card.Title flex={2}>Last archived exams</Card.Title>
 				<TimelineRoot flex={10} justifyContent='center'>
 

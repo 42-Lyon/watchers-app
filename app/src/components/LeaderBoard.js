@@ -2,7 +2,6 @@ import { Card, HStack, Table } from "@chakra-ui/react";
 import { PaginationNextTrigger, PaginationPageText, PaginationPrevTrigger, PaginationRoot } from "./ui/pagination";
 import useUsers from "../hooks/useUsers";
 import { Avatar } from "./ui/avatar";
-import { FaUser } from "react-icons/fa6";
 import { useMe } from "../context/useMe";
 
 export default function LeaderBoard({...props}) {
@@ -18,7 +17,7 @@ export default function LeaderBoard({...props}) {
 				<Table.Root size='md'>
 					<Table.Header>
 						<Table.Row bg='transparent'>
-							<Table.ColumnHeader><FaUser/></Table.ColumnHeader>
+							<Table.ColumnHeader></Table.ColumnHeader>
 							<Table.ColumnHeader>Login</Table.ColumnHeader>
 							<Table.ColumnHeader>Count</Table.ColumnHeader>
 							<Table.ColumnHeader textAlign="end">Last</Table.ColumnHeader>

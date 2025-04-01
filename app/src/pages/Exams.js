@@ -5,8 +5,8 @@ import ExamCreationForm from "../components/ExamCreationForm";
 import { useMe } from "../context/useMe";
 import LeftNavTemplate from "../templates/LeftNavTemplate";
 import { EmptyState } from "../components/ui/empty-state";
-import { FaEyeSlash } from "react-icons/fa6";
 import { Center } from "@chakra-ui/react";
+import { LuShieldAlert } from "react-icons/lu";
 
 export default function Exams() {
 
@@ -33,7 +33,7 @@ export default function Exams() {
 
 	if (months && me)
 	return (
-		<LeftNavTemplate me={me}>
+		<LeftNavTemplate me={me} gap='32px' pb='128px'>
 			{months.map((date) => (
 				<ExamMonthSection key={date.month + date.year} year={date.year} month={date.month} exams={
 					exams.filter(exam =>
@@ -48,7 +48,7 @@ export default function Exams() {
 					w='100%'
 				>
 					<EmptyState
-						icon={<FaEyeSlash />}
+						icon={<LuShieldAlert />}
 						title="No exams planned"
 						description="It seems there are no exams planned for the moment. Check back later or contact an administrator if you think that's an issue."
 					/>

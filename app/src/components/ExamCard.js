@@ -1,5 +1,4 @@
 import { Card, Flex, Grid, Text } from "@chakra-ui/react";
-import { FaCalendar } from "react-icons/fa6";
 import ExamSlot from "./ExamSlot";
 import GroupBadge from "./GroupBadge";
 import { useMe } from "../context/useMe";
@@ -7,6 +6,7 @@ import { Alert } from "./ui/alert";
 import ExamStatus from "./ExamStatus";
 import ExamDrawer from "./ExamDrawer";
 import { useState } from "react";
+import { LuCalendar } from "react-icons/lu";
 
 export default function ExamCard({ exam, ...props }) {
 
@@ -22,7 +22,7 @@ export default function ExamCard({ exam, ...props }) {
 			<Card.Header>
 				<Card.Title display='flex' alignItems='center' justifyContent='space-between' gap='4px'>
 					<Flex alignItems='center' gap='4px'>
-						<FaCalendar/> {exam.start_at.toLocaleDateString('fr-FR')}
+						<LuCalendar/> {exam.start_at.toLocaleDateString('fr-FR')}
 						<ExamStatus exam={exam} ml='8px'/>
 					</Flex>
 					{ exam.title && <Text fontSize='sm' color='text.subtle'>{exam.title}</Text>}

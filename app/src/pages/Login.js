@@ -13,7 +13,7 @@ export default function Login() {
 			gap='10vh'
 		>
 			<Heading>
-				Intra Watcher
+				Intra Tutor
 			</Heading>
 			<Button as='a' href={`${config.apiUrl}/auth/42`} >
 				Login with 

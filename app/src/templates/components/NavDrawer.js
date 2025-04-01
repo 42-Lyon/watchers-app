@@ -1,7 +1,7 @@
 import Sidebar from "./Sidebar";
 import { DrawerBackdrop, DrawerCloseTrigger, DrawerContent, DrawerRoot, DrawerTrigger } from "../../components/ui/drawer";
-import { FaBars } from "react-icons/fa6";
 import { IconButton } from "@chakra-ui/react";
+import { LuMenu } from "react-icons/lu";
 
 export default function NavDrawer({ me, ...props }) {
 	return (
@@ -17,7 +17,7 @@ export default function NavDrawer({ me, ...props }) {
 					zIndex={10}
 					aria-label="Open navigation"
 				>
-					<FaBars />
+					<LuMenu />
 				</IconButton>
 			</DrawerTrigger>
 			<DrawerContent>

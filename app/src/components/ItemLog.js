@@ -1,14 +1,14 @@
 import { Text } from "@chakra-ui/react";
 import { TimelineConnector, TimelineContent, TimelineDescription, TimelineItem, TimelineTitle } from "./ui/timeline";
-import { FaArrowLeft, FaArrowRight, FaBoxArchive, FaMinus, FaPlus } from "react-icons/fa6";
 import { Tag } from "./ui/tag";
+import { LuArchive, LuArrowLeft, LuArrowRight, LuMinus, LuPlus } from "react-icons/lu";
 
 const getIcon = (event) => {
-	if (event === 'ExamArchiveLogs') return <FaBoxArchive />
-	if (event === 'ExamRegisterLogs' || event === 'ExamForceRegisterLogs') return <FaArrowRight />
-	if (event === 'ExamUnregisterLogs' || event === 'ExamForceUnregisterLogs' ) return <FaArrowLeft />
-	if (event === 'ExamCreationLogs') return <FaPlus/>
-	if (event === 'ExamDeletionLogs') return <FaMinus />
+	if (event === 'ExamArchiveLogs') return <LuArchive />
+	if (event === 'ExamRegisterLogs' || event === 'ExamForceRegisterLogs') return <LuArrowRight />
+	if (event === 'ExamUnregisterLogs' || event === 'ExamForceUnregisterLogs' ) return <LuArrowLeft />
+	if (event === 'ExamCreationLogs') return <LuPlus/>
+	if (event === 'ExamDeletionLogs') return <LuMinus />
 }
 
 const getColor = (event) => {

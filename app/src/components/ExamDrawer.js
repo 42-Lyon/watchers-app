@@ -1,6 +1,5 @@
 import { DrawerBody, Flex, Heading, Text } from "@chakra-ui/react";
 import { DrawerActionTrigger, DrawerBackdrop, DrawerCloseTrigger, DrawerContent, DrawerFooter, DrawerHeader, DrawerRoot, DrawerTitle } from "./ui/drawer";
-import { FaBoxArchive, FaCalendar, FaPlus, FaTrashCan, FaXmark } from "react-icons/fa6";
 import ExamStatus from "./ExamStatus";
 import { useState } from "react";
 import { toaster } from "./ui/toaster";
@@ -10,6 +9,7 @@ import ExamSlot from "./ExamSlot";
 import { Button } from "./ui/button";
 import ConfirmDialog from "./ConfirmDialog";
 import ExamsLogs from "./ExamsLogs";
+import { LuArchive, LuCalendar, LuPlus, LuTrash2, LuX } from "react-icons/lu";
 
 export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 	const [loading, setLoading] = useState(false);
@@ -98,7 +98,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
           	<DrawerTitle display='flex' flexDir='column' w='80%'>
 				<Flex alignItems='center' w='100%' justifyContent='space-between'>
 					<Flex alignItems='center' gap='4px'>
-						<FaCalendar/> {exam.start_at.toLocaleDateString('fr-FR')}
+						<LuCalendar/> {exam.start_at.toLocaleDateString('fr-FR')}
 						<ExamStatus exam={exam} ml='8px'/>
 					</Flex>
 					{ exam.title && <Text fontSize='sm' color='text.subtle'>{exam.title}</Text>}
@@ -121,7 +121,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 							colorPalette='red' size='sm' w='100%' mt='8px'
 							onClick={() => unregisterWatcher(watcher)}
 							variant='subtle'
-							><FaXmark/> Remove</Button>
+							><LuX/> Remove</Button>
 					</ProfileCard>
 				))}
 				{
@@ -135,7 +135,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 					onValid={registerWatcher}
 					>
 						<Button variant="outline" size="sm">
-							<FaPlus/> Add a watcher
+							<LuPlus/> Add a watcher
 						</Button>
 					</UserSearchInput>
 				}
@@ -155,7 +155,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 						loading={loading}
 						colorPalette='green'
 					>
-						<FaBoxArchive/> Archived
+						<LuArchive/> Archived
 					</Button>
 				</ConfirmDialog>
 			}
@@ -167,7 +167,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 					confirmColor='red'
 				>
 					<Button colorPalette="red" loading={loading} >
-						<FaTrashCan/> Delete
+						<LuTrash2/> Delete
 					</Button>
 				</ConfirmDialog>
 			}

@@ -4,13 +4,13 @@ export default function ExamStatus({ exam, ...props }) {
 	if (!exam.is_archived && exam.end_at < new Date())
 		return (
 			<Status size='sm' {...props} value="warning">
-				Awaiting Review
+				Awaiting review
 			</Status>
 		)
 	if (!exam.is_archived && exam.start_at < new Date())
 		return (
 			<Status size='sm' {...props} value="success">
-				In Progress
+				In progress
 			</Status>
 		)
 	if (exam.is_archived)

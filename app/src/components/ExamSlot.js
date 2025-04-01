@@ -1,10 +1,10 @@
 import { Center, defineStyle } from "@chakra-ui/react";
-import { FaEllipsis, FaPlus, FaXmark } from "react-icons/fa6";
 import { Avatar } from "./ui/avatar";
 import { useMe } from "../context/useMe";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { toaster } from "./ui/toaster";
+import { LuEllipsis, LuPlus, LuX } from "react-icons/lu";
 
 export default function ExamSlot({ watcher, exam, disabled }) {
 
@@ -51,7 +51,7 @@ export default function ExamSlot({ watcher, exam, disabled }) {
 	if (disabled) {
 		return (
 		<Button minHeight='40px' width='100%' disabled variant='outline'>
-			<FaEllipsis/>
+			<LuEllipsis/>
 		</Button>
 	)}
 
@@ -68,7 +68,7 @@ export default function ExamSlot({ watcher, exam, disabled }) {
 					</>
 					:
 					<>
-						<FaXmark/> Unregister
+						<LuX/> Unregister
 					</>
 				}
 			</Button>
@@ -84,7 +84,7 @@ export default function ExamSlot({ watcher, exam, disabled }) {
 	}
 	return (
 		<Button minHeight='40px' width='100%' variant='outline' onClick={register} loading={isLoading}>
-			<FaPlus/> Register
+			<LuPlus/> Register
 		</Button>
 	)
 }
