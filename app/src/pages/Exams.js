@@ -1,45 +1,45 @@
-// import { useExams } from "../context/useExams";
 import ExamMonthSection from "../components/ExamMonthSection";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ExamCreationForm from "../components/ExamCreationForm";
 import { useMe } from "../context/useMe";
 import LeftNavTemplate from "../templates/LeftNavTemplate";
 import { EmptyState } from "../components/ui/empty-state";
-import { Center } from "@chakra-ui/react";
-import { LuHistory, LuPlus, LuRefreshCcw, LuShieldAlert } from "react-icons/lu";
+import { Center, ActionBar, Portal, HStack } from "@chakra-ui/react";
+import { LuHistory, LuRefreshCcw, LuShieldAlert } from "react-icons/lu";
 import useExams from "hooks/useExams";
 import { Button } from "components/ui/button";
+import { PaginationNextTrigger, PaginationPageText, PaginationPrevTrigger, PaginationRoot } from "components/ui/pagination";
 
 export default function Exams() {
 
 	const { me } = useMe();
 
-	const { exams, create, loadNextPage, loading, currentPage, pageCount } = useExams({
-		filter: {
-			is_archived: false,
-		},
-	})
+	const pageSize = 20;
 
-	const {
-		exams: archivedExams,
-		loadNextPage: loadHistory,
-		loading: loadingHistory,
-		currentPage: currentHistoryPage,
-		pageCount: historyPageCount,
-	} = useExams({
-		page: 0,
+	
+	const archivedOptions = useRef({
 		sort: '-start_at',
+		pageSize,
 		filter: {
 			is_archived: true,
 		},
-	})
+	});
+	const currentOptions = useRef({
+		sort: 'start_at',
+		pageSize,
+		filter: {
+			is_archived: false,
+		},
+	});
+	
+	const [mode, setMode] = useState(currentOptions);
 
-	console.log(currentHistoryPage, historyPageCount);
+	const { exams, create, loading, currentPage, pageCount, setPage } = useExams(mode.current)
+
 
 	const splitExams = (exams) => {
 		let months = [];
 		exams.forEach(exam => {
-			console.log('exam', exam.start_at);
 			const month = new Date(exam.start_at).toLocaleString('default', { month: 'long' });
 			const year = new Date(exam.start_at).getFullYear();
 			if (months.find((m) => m.month === month && m.year === year))
@@ -52,27 +52,17 @@ export default function Exams() {
 	
 	const [months, setMonths] = useState([]);
 	useEffect(() => {
-		setMonths(splitExams([...exams, ...archivedExams]));
-	}, [exams, archivedExams]);
+		setMonths(splitExams([...exams]));
+	}, [exams]);
 	
 	if (months && me)
 	return (
 		<LeftNavTemplate me={me} gap='32px' pb='128px' alignItems='center'>
-			{me.is_staff && <Button
-				variant='outline'
-				leftIcon={<LuPlus />}
-				onClick={loadHistory}
-				loading={loadingHistory}
-				disabled={currentHistoryPage >= historyPageCount}
-				w='fit-content'
-			>
-				<LuHistory/> Load history
-			</Button>}
 			{months.map((date) => (
 				<ExamMonthSection
 					w='100%'
 					key={date.month + date.year} year={date.year} month={date.month} exams={
-						[...archivedExams, ...exams].filter(exam =>
+						[...exams].filter(exam =>
 							new Date(exam.start_at).toLocaleString('default', { month: 'long' }) === date.month &&
 							new Date(exam.start_at).getFullYear() === date.year
 						)
@@ -91,17 +81,39 @@ export default function Exams() {
 					/>
 				</Center>
 			}
-			{me.is_staff && <Button
-				variant='outline'
-				leftIcon={<LuPlus />}
-				onClick={loadNextPage}
-				loading={loading}
-				disabled={currentPage >= pageCount}
-				w='fit-content'
-			>
-				<LuRefreshCcw/> Load more exams ({currentPage}/{pageCount})
-			</Button>}
-			{ me.is_staff && <ExamCreationForm onCreate={create} />}
+			<ActionBar.Root open={me.is_staff}>
+				<Portal>
+					<ActionBar.Positioner>
+						<ActionBar.Content>
+							<PaginationRoot
+								count={pageCount}
+								pageSize={pageSize}
+								page={currentPage}
+								onPageChange={(e) => setPage(e.page)}
+							>
+								<HStack wrap="wrap">
+									<PaginationPrevTrigger />
+									<PaginationPageText />
+									<PaginationNextTrigger />
+								</HStack>
+							</PaginationRoot>
+							<ActionBar.Separator />
+							<Button variant="outline" size="sm" colorPalette='blue' onClick={() => setMode(mode === archivedOptions ? currentOptions : archivedOptions)}>
+								{ mode === currentOptions ?
+								<>
+									<LuHistory />
+									Show history
+								</> :
+								<>
+									<LuRefreshCcw />
+									Show current
+								</>}
+							</Button>
+							<ExamCreationForm size='sm' onCreate={create} />
+						</ActionBar.Content>
+					</ActionBar.Positioner>
+				</Portal>
+			</ActionBar.Root>
 		</LeftNavTemplate>
 	);
 }

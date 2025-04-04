@@ -5,13 +5,11 @@ import { LuLogs } from "react-icons/lu";
 
 export default function UserLogs({ user }) {
 
-	const [logs, setLogs] = useState([]);
 	const [loading, setLoading] = useState(true);
 
 	const fetchLogs = async () => {
 		setLoading(true);
-		const data = await user.getLogs();
-		setLogs(data);
+		await user.fetchLogs();
 		setLoading(false);
 	}
 
@@ -29,7 +27,7 @@ export default function UserLogs({ user }) {
 		> <Spinner />Loading... </Center>
 
 
-	if (!logs.length)
+	if (!user.logs.length)
 		return <EmptyState.Root size={'sm'} height={'full'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
 	<EmptyState.Content>
 	  <EmptyState.Indicator>
@@ -53,7 +51,7 @@ export default function UserLogs({ user }) {
 			width={'full'}
 			height={'full'}
 		>
-			{logs && logs.map(log => (
+			{user.logs.length > 0 && user.logs.map(log => (
 				<ItemLog log={log} key={log._id} />
 			))}
 		</TimelineRoot>

@@ -2,54 +2,42 @@ import Exam from "classes/Exam";
 import config from "../config";
 import { useCallback, useEffect, useState } from "react";
 
-export default function useExams(defaultOptions, page = 0, pageSize = 10) {
+export default function useExams({filter = {}, sort = '-start_at', pageSize = 10, page = 1} = {}) {
+
 	const [exams, setExams] = useState([]);
-	const [options, setOptions] = useState(defaultOptions);
 	const [loading, setLoading] = useState(true);
 	const [pageCount, setPageCount] = useState(0);
 	const [currentPage, setCurrentPage] = useState(page);
 
 	const updateExam = useCallback((updatedExam) => {
 		setExams((prevExams) => prevExams.map((exam) => (exam._id === updatedExam._id ? updatedExam : exam)).filter((exam) => {
-				for (const key in options.filter) {
-					if (exam[key] !== options.filter[key]) return false;
-				}
-				return true;
-			}));
-	}, [options])
+			for (const key in filter) {
+				if (exam[key] !== filter[key]) return false;
+			}
+			return true;
+		}));
+	}, [filter])
 
 	const deleteExam = useCallback((examId) => {
 		setExams((prevExams) => prevExams.filter((exam) => exam._id !== examId));
 	}, [])
 
-	const fetchPage = async (page) => {
+	const fetchExams = async () => {
 		setLoading(true);
-		const queryOptions = {...options, page, page_size: pageSize};
-		for (const key in queryOptions.filter) {
-			queryOptions[`filter[${key}]`] = queryOptions.filter[key];
+		const queryOptions = {sort, page: currentPage, page_size: pageSize};
+		for (const key in filter) {
+			queryOptions[`filter[${key}]`] = filter[key];
 		}
-		delete queryOptions.filter;
-		const query = new URLSearchParams(queryOptions).toString();
-		const response = await fetch(`${config.apiUrl}/exams?${query}`, {
+		const response = await fetch(`${config.apiUrl}/exams?${new URLSearchParams(queryOptions).toString()}`, {
 			credentials: 'include',
 		});
+
 		if (response.ok) {
-			setPageCount(response.headers.get('X-Page-Count'));
+			setPageCount(parseInt(response.headers.get('X-Page-Count')));
+			const data = await response.json();
+			setExams(sortExams(data.map(e => new Exam(e, updateExam, deleteExam)), sort));
 		}
 		setLoading(false);
-		return response;
-	}
-
-	const fetchExams = async () => {
-		const response = await fetchPage(currentPage);
-		if (response.ok) {
-			setExams((await response.json()).map(e => new Exam(e, updateExam, deleteExam)).sort((a, b) => a.start_at - b.start_at));
-		}
-	}
-
-	const setQueryOption = (newOptions) => {
-		setOptions((prevOptions) => ({ ...prevOptions, ...newOptions }));
-		fetchExams();
 	}
 
 	const create = async (exam) => {
@@ -62,27 +50,48 @@ export default function useExams(defaultOptions, page = 0, pageSize = 10) {
 			body: JSON.stringify(exam),
 		});
 		if (response.ok) {
-			const newExam = new Exam(await response.json(), updateExam, deleteExam);
-			setExams([...exams, newExam].sort((a, b) => a.start_at - b.start_at));
+			fetchExams()
 		}
 		return response;
 	};
 
-	const loadNextPage = async () => {
-		if (currentPage <= pageCount) {
-			setCurrentPage((prevPage) => prevPage + 1);
-			const response = await fetchPage(currentPage + 1);
-			if (!response.ok)
-				return;
-			const newExams = (await response.json()).map(e => new Exam(e, updateExam, deleteExam));
-			setExams((prevExams) => [...prevExams, ...newExams].sort((a, b) => a.start_at - b.start_at));
-		}
-	}
-
 	useEffect(() => {
 		fetchExams();
-	}, []);
+	}, [currentPage]);
+
+	useEffect(() => {
+		if (currentPage === 1) {
+			fetchExams();
+		}
+		else {
+			setCurrentPage(1);
+		}
+	}, [filter, sort, pageSize]);
+
+	const setPage = (page) => {
+		setCurrentPage(page);
+	}
 
 	
-	return { exams, loading, setQueryOption, create, loadNextPage, currentPage, pageCount };
+	return { exams, create, loading, setPage, currentPage, pageCount };
+}
+
+
+function sortExams(exams, sort) {
+	const sorts = sort.split(' ').map(s => {
+		return {
+			field: s.replace('-', ''),
+			order: s.startsWith('-') ? -1 : 1
+		};
+	});
+
+	return exams.sort((a, b) => {
+		for (const { field, order } of sorts) {
+			if (a[field] < b[field])
+				return -1 * order;
+			if (a[field] > b[field])
+				return 1 * order;
+		}
+		return 0;
+	});
 }

@@ -1,6 +1,7 @@
 import { Card, Flex, HStack, Stack, Text } from "@chakra-ui/react";
 import { Avatar } from "./ui/avatar";
 import GroupBadge from "./GroupBadge";
+import UserDrawer from "./UserDrawer";
 
 export default function ProfileCard({user, children, ...props}) {
 
@@ -36,6 +37,6 @@ export default function ProfileCard({user, children, ...props}) {
 				{ children && <Card.Footer p={0}>
 					{children}
 				</Card.Footer>}
-			</Card.Root>
+			</Card.Root>	
 		);
 }

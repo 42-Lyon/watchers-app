@@ -17,7 +17,7 @@ const groups = createListCollection({
 	],
 })
 
-export default function ExamCreationForm({onCreate}) {
+export default function ExamCreationForm({onCreate, ...props}) {
 
 	const [exam, setExam] = useState({
 		start_at: '',
@@ -61,9 +61,7 @@ export default function ExamCreationForm({onCreate}) {
 	<DialogRoot lazyMount placement='center' open={open} onOpenChange={(e) => setOpen(e.open)}>
 		<DialogTrigger asChild>
 			<Button
-				position='fixed'
-				bottom='32px'
-				right='32px'
+				{...props}
 			>
 				<LuPlus/> Create Exam
 			</Button>

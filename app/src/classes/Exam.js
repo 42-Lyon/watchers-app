@@ -27,7 +27,7 @@ export default class Exam {
 	}
 
 	setWatchers(watchers) {
-		this.watchers = watchers.map(w => new Watcher(w, this));
+		this.watchers = watchers.map(w => new Watcher(w, null, null, this));
 	}
 
 	async register() {

@@ -7,19 +7,17 @@ import { useEffect, useState } from "react"
 
 export default function UserExamStats({ user }) {
 	
-	const [exams, setExams] = useState([]);
 	const [loading, setLoading] = useState(true);
 
 	const fetchExams = async () => {
 		setLoading(true);
-		const data = await user.getExams();
-		setExams(data);
+		await user.fetchExams();
 		setLoading(false);
 	}
 	
 	useEffect(() => {
 		fetchExams();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line
 	}, []);
 
 	if (!user) return null;
@@ -29,16 +27,18 @@ export default function UserExamStats({ user }) {
 			height={'full'}
 			width={'full'}
 			gap={'2'}
-		> <Spinner />Loading... </Center>
+		>
+			<Spinner />Loading...
+		</Center>
 
 	return <Stack>
 			<HStack>
 				<ExamLastWatch lastWatch={user.last_watch && new Date(user.last_watch)} />
 				<ExamStats label={'Watch count'} value={user.nb_watch} />
 			</HStack>
-			{exams?.length > 0 && <>
-				<LineExamsChart exams={exams.filter(exam => exam.is_archived)} />
-				<ExamCarousel exams={exams} />
+			{user.exams.length > 0 && <>
+				<LineExamsChart exams={user.exams.filter(exam => exam.is_archived)} />
+				<ExamCarousel exams={user.exams} />
 			</>}
 		</Stack>
 

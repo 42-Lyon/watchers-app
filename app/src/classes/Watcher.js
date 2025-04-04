@@ -3,8 +3,8 @@ import User from "./User";
 
 export default class Watcher extends User {
 
-	constructor(watcher, exam) {
-		super(watcher, exam.updateFunction, exam.deleteFunction);
+	constructor(watcher, updateFunction, deleteFunction, exam) {
+		super(watcher, updateFunction, deleteFunction);
 		this.exam = exam;
 	}
 
@@ -15,7 +15,8 @@ export default class Watcher extends User {
 		});
 		if (response.ok) {
 			this.exam.setWatchers(await response.json());
-			if (this.exam.updateFunction) this.exam.updateFunction(this);
+			if (this.exam.updateFunction) this.exam.updateFunction(this.exam);
+			if (this.updateFunction) this.updateFunction(this);
 		}
 		return response;
 	}

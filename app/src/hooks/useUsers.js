@@ -1,10 +1,20 @@
+import User from "classes/User";
 import config from "../config";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10) {
 	const [users, setUsers] = useState([]);
 	const [page, setPage] = useState(defaultPage);
 	const [nbPages, setNbPages] = useState(0);
+
+
+	const updateUser = useCallback((updatedUser) => {
+		setUsers((prevUsers) => prevUsers.map((user) => (user._id === updatedUser._id ? updatedUser : user)));
+	}, [])
+
+	const deleteUser = useCallback((userId) => {
+		setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+	}, [])
 
 	useEffect(() => {
 		fetchUsers();
@@ -18,7 +28,7 @@ export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10)
 		const data = await response.json();
 		if (response.ok)
 		{
-			setUsers(data);
+			setUsers(data.map(u => new User(u, updateUser, deleteUser)));
 			setNbPages(response.headers.get('X-Page-Count'));
 		}
 	}
@@ -35,15 +45,6 @@ export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10)
 		setPage(number);
 	}
 
-	const deleteUser = async (user) => {
-		const response = await fetch(`${config.apiUrl}/users/${user.login}`, {
-			method: 'DELETE',
-			credentials: 'include'
-		});
-		if (response.ok)
-			setUsers((users) => users.filter(u => u._id !== user._id));
-	}
-
 	const addUser = async (login) => {
 		const response = await fetch(`${config.apiUrl}/users`, {
 			method: 'POST',
@@ -54,13 +55,9 @@ export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10)
 			body: JSON.stringify({login}),
 		});
 		if (response.status === 201) {
-			const user = await response.json();
-			setUsers([...users, user]);
+			await fetchUsers()
 		}
-		else {
-			const error = await response.text();
-			throw new Error(error);
-		}
+		return response;
 	}
 
 	const userSearch = async (login) => {
@@ -75,56 +72,8 @@ export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10)
 		}
 	}
 
-	const getExams = async (user) => {
-		const response = await fetch(`${config.apiUrl}/users/${user.login}/exams`, {
-			credentials: 'include'
-		});
-		const data = await response.json();
-		if (response.ok)
-			return data.map(e => ({
-				...e,
-				start_at: new Date(e.start_at),
-				end_at: new Date(new Date(e.start_at).setHours(new Date(e.start_at).getHours() + e.duration)),
-			}));
-	}
-
-	const getLogs = async (user) => {
-		const response = await fetch(`${config.apiUrl}/logs?query[user]=${user.login}`, {
-			credentials: 'include'
-		});
-		const data = await response.json();
-		if (response.ok)
-			return data;
-	}
-
-	const updateUser = async (user, login) => {
-		const response = await fetch(`${config.apiUrl}/users/${login}`, {
-			method: 'PATCH',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(user),
-		});
-		if (response.ok) {
-			const user = await response.json();
-			setUsers((users) => users.map(u => {
-				if (u.login === login)
-					return {...u, ...user};
-				return u;
-			}));
-			return user;
-		}
-		return null;
-	}
-
-	return { users: users.map(u => ({
-			...u,
-			delete: () => deleteUser(u),
-			getExams: () => getExams(u),
-			getLogs: () => getLogs(u),
-			update: (user) => updateUser(user, u.login),
-		})),
+	return {
+		users,
 		nextPage,
 		prevPage,
 		addUser,
