@@ -11,7 +11,6 @@ export default function UserLogs({ user }) {
 	const fetchLogs = async () => {
 		setLoading(true);
 		const data = await user.getLogs();
-		console.log(data);	
 		setLogs(data);
 		setLoading(false);
 	}
@@ -23,7 +22,12 @@ export default function UserLogs({ user }) {
 	if (!user) return null;
 
 	if (loading)
-		return <Center> <Spinner />Loading... </Center>
+		return <Center
+			height={'full'}
+			width={'full'}
+			gap={'2'}
+		> <Spinner />Loading... </Center>
+
 
 	if (!logs.length)
 		return <EmptyState.Root size={'sm'} height={'full'} display={'flex'} flexDirection={'column'} justifyContent={'center'} alignItems={'center'}>
@@ -44,7 +48,11 @@ export default function UserLogs({ user }) {
 		// height={'100%'}
 		// overflowY={'auto'}
 	>
-		<TimelineRoot>
+		<TimelineRoot
+			overflow={'auto'}
+			width={'full'}
+			height={'full'}
+		>
 			{logs && logs.map(log => (
 				<ItemLog log={log} key={log._id} />
 			))}

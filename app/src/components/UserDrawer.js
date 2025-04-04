@@ -3,7 +3,11 @@ import ProfileCard from "./ProfileCard";
 import { LuCalendar, LuLogs, LuSettings } from "react-icons/lu";
 import UserExamStats from "./UserExamStats";
 import UserLogs from "./UserLogs";
+import { useMe } from "context/useMe";
+import UserSettings from "./UserSettings";
 export default function UserDrawer({ user, children }) {
+
+	const { me } = useMe();
 
 	return <Drawer.Root size='md'>
       <Drawer.Trigger asChild>
@@ -27,19 +31,19 @@ export default function UserDrawer({ user, children }) {
 							<LuLogs />
 							Logs
 						</Tabs.Trigger>
-						<Tabs.Trigger value="settings">
+						{ me.is_staff && <Tabs.Trigger value="settings">
 							<LuSettings />
 							Settings
-						</Tabs.Trigger>
+						</Tabs.Trigger>}
 					</Tabs.List>
-					<Tabs.Content value="exams">
+					<Tabs.Content value="exams" flexGrow={1} overflowY='auto'>
 						<UserExamStats user={user}/>
 					</Tabs.Content>
-					<Tabs.Content value="logs" flexGrow={1}>
+					<Tabs.Content value="logs" flexGrow={1} overflowY='auto'>
 						<UserLogs user={user}/>
 					</Tabs.Content>
-					<Tabs.Content value="settings">
-							Settings
+					<Tabs.Content value="settings" flexGrow={1} overflowY='auto'>
+						<UserSettings user={user}/>
 					</Tabs.Content>
 				</Tabs.Root>
             </Drawer.Body>

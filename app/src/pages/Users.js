@@ -1,6 +1,6 @@
 import { useMe } from "../context/useMe";
 import LeftNavTemplate from "../templates/LeftNavTemplate";
-import {  ActionBar, Button, Field, HStack, Heading, IconButton, Input, Portal, SegmentGroup, Stack, Table } from "@chakra-ui/react"
+import {  ActionBar, Button, HStack, Heading, IconButton, Input, Portal, Stack, Table } from "@chakra-ui/react"
 import {
   PaginationItems,
   PaginationNextTrigger,

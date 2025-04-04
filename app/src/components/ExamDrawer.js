@@ -16,7 +16,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 
 	const deleteExam = async () => {
 		setLoading(true);
-		const res = await exam.remove();
+		const res = await exam.delete();
 		if (!res.ok) {
 			const err = await res.text();
 			toaster.create({
@@ -54,7 +54,7 @@ export default function ExamDrawer({isAdmin, open, setOpen, exam}) {
 
 	const unregisterWatcher = async (watcher) => {
 		setLoading(true);
-		const res = await watcher.remove();
+		const res = await watcher.unregister();
 		if (!res.ok) {
 			const err = await res.text();
 			toaster.create({

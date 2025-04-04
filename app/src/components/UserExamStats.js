@@ -19,12 +19,17 @@ export default function UserExamStats({ user }) {
 	
 	useEffect(() => {
 		fetchExams();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	if (!user) return null;
 
 	if (loading)
-		return <Center> <Spinner />Loading... </Center>
+		return <Center
+			height={'full'}
+			width={'full'}
+			gap={'2'}
+		> <Spinner />Loading... </Center>
 
 	return <Stack>
 			<HStack>

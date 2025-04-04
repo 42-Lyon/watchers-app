@@ -1,10 +1,10 @@
 import { Flex, Grid, Heading, Stack, Text } from "@chakra-ui/react";
 import ExamCard from "./ExamCard";
 
-export default function ExamMonthSection({ year, month, exams }) {
-	console.log('exams', month, exams);
+export default function ExamMonthSection({ year, month, exams, ...props }) {
+
 	return (
-		<Stack>
+		<Stack {...props}>
 			<Flex alignItems='center' gap='4px'>
 				<Heading>{month}</Heading>
 				<Text color='fg.muted'>({year})</Text>

@@ -3,7 +3,6 @@ import './App.css';
 import Login from './pages/Login';
 import Exams from './pages/Exams';
 import Users from './pages/Users';
-import { ExamsProvider } from './context/useExams';
 import { Toaster } from './components/ui/toaster';
 import Statistics from './pages/Statistics';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from "chart.js";
@@ -17,7 +16,7 @@ function App() {
 
   ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement);
   return (
-     <ExamsProvider>
+    <>
       <Router>
         <Routes>
           { me &&
@@ -36,7 +35,7 @@ function App() {
         </Routes>
       </Router>
       <Toaster />
-     </ExamsProvider>
+    </>
   );
 }
 

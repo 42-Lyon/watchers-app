@@ -97,11 +97,33 @@ export default function useUsers(sort = 'login', defaultPage = 1, pageSize = 10)
 			return data;
 	}
 
+	const updateUser = async (user, login) => {
+		const response = await fetch(`${config.apiUrl}/users/${login}`, {
+			method: 'PATCH',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(user),
+		});
+		if (response.ok) {
+			const user = await response.json();
+			setUsers((users) => users.map(u => {
+				if (u.login === login)
+					return {...u, ...user};
+				return u;
+			}));
+			return user;
+		}
+		return null;
+	}
+
 	return { users: users.map(u => ({
 			...u,
 			delete: () => deleteUser(u),
 			getExams: () => getExams(u),
 			getLogs: () => getLogs(u),
+			update: (user) => updateUser(user, u.login),
 		})),
 		nextPage,
 		prevPage,

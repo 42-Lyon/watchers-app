@@ -8,30 +8,31 @@ const { ExamCreationLogs, ExamDeletionLogs, ExamArchiveLogs, ExamUnregisterLogs,
 const router = new express.Router();
 
 router.get('/', async (req, res) => {
-	const { sort, page, pageSize, is_archived, start_at } = req.query;
-	const query = {};
-	if (is_archived)
-		query.is_archived = is_archived;
-	if (start_at)
-		query.start_at = start_at;
-	const sortQuery = {};
-	if (sort)
-		sortQuery[sort] = 1;
-	const pageQuery = {};
-	if (page)
-		pageQuery.page = page;
-	else
-		pageQuery.page = 1;
-	if (pageSize)
-		pageQuery.pageSize = pageSize > 100 ? 100 : pageSize;
-	else
-		pageQuery.pageSize = 20;
+	const {
+		sort,
+		page = 1,
+		page_size = 20,
+		filter = {}
+	} = req.query;
+
+	const pageSize = Math.min(page_size, 100);
+	if (pageSize < 1) {
+		return res.status(400).send("Invalid page size");
+	}
+
 	try {
-		const exams = await Exams.find(query).sort(sortQuery).skip((page - 1) * pageQuery.pageSize).limit(pageQuery.pageSize).populate('watchers');
-		const total = await Exams.countDocuments(query);
+		let exams = [];
+		if (page > 0) {
+			exams = await Exams.find(filter)
+				.sort(sort)
+				.skip((page - 1) * pageSize)
+				.limit(pageSize)
+				.populate('watchers');
+		}
+		const total = await Exams.countDocuments(filter);
 		res.set('X-Total-Count', total);
-		res.set('X-Page-Size', pageQuery.pageSize);
-		res.set('X-Page-Count', total / pageQuery.pageSize);
+		res.set('X-Page-Size', pageSize);
+		res.set('X-Page-Count', Math.ceil(total / pageSize));
 		res.set('Access-Control-Expose-Headers', 'X-Total-Count, X-Page-Size, X-Page-Count');
 		return res.status(200).send(exams);
 	}
@@ -137,7 +138,7 @@ router.post('/:id/register', async (req, res) => {
 			exam_date: exam.start_at
 		});
 		log.save();
-		return res.status(200).send(exam);
+		return res.status(200).send(exam.watchers);
 	}
 	catch(e) {
 		console.error(e);
@@ -163,14 +164,14 @@ router.post('/:id/unregister', async (req, res) => {
 			exam_date: exam.start_at
 		});
 		log.save();
-		return res.status(200).send(exam);
+		return res.status(200).send(exam.watchers);
 	}
 	catch {
 		return res.status(400).send();
 	}
 });
 
-router.post('/:id/archived', isStaff, async (req, res) => {
+router.post('/:id/archive', isStaff, async (req, res) => {
 	try {
 		const exam = await Exams.findById(req.params.id).populate('watchers');
 		if (!exam) {
@@ -186,7 +187,7 @@ router.post('/:id/archived', isStaff, async (req, res) => {
 				watcher.last_watch = exam.start_at;
 			watcher.nb_watch++;
 			try {
-				if (req.query.log_sheet) {
+				if (req.query.log_sheet === 'true') {
 					await insertRow(watcher.login, exam.start_at);
 				}
 			}

@@ -28,7 +28,8 @@ const getTitle = (event) => {
 	if (event === 'ExamForceRegisterLogs') return 'force-registered a user for the exam'
 	if (event === 'ExamForceUnregisterLogs') return 'force-unregistered a user from the exam'
 }
-export default function ItemLog({ log, ...props }) {
+
+export default function ExamItemLog({ log, ...props }) {
 	return (
 		<TimelineItem {...props}>
 			<TimelineConnector
@@ -38,12 +39,7 @@ export default function ItemLog({ log, ...props }) {
 			</TimelineConnector>
 			<TimelineContent>
 				<TimelineTitle>
-					<Tag>@{log.user.login}</Tag> {getTitle(log.__t)} of <b>{new Date(log.exam_date).toLocaleString('en-EN', { 
-						// weekday: 'long', 
-						day: '2-digit', 
-						month: '2-digit', 
-						year: 'numeric' 
-    				})}</b>
+					<Tag>@{log.user.login}</Tag> {getTitle(log.__t)}
 				</TimelineTitle>
 				<TimelineDescription>{new Date(log.created_at).toLocaleString('fr-FR')}</TimelineDescription>
 				{

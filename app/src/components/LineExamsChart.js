@@ -1,6 +1,4 @@
-import { useMe } from "../context/useMe";
 import { Box, Card, useToken } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 
 export default function LineExamsChart({ exams, ...props }) {

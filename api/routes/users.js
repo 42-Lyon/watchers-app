@@ -113,9 +113,9 @@ router.delete('/:login', isStaff, async (req, res) => {
 
 router.patch('/:login', isStaff, async (req, res) => {
 	const login = req.params.login;
-
+	console.log(req.body);
 	try {
-		const user = await Users.findOneAndUpdate({ login }, req.body);
+		const user = await Users.findOneAndUpdate({ login }, req.body, { new: true });
 		if (!user) {
 			return res.status(404).send();
 		}
