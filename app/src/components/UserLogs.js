@@ -15,6 +15,7 @@ export default function UserLogs({ user }) {
 
 	useEffect(() => {
 		fetchLogs();
+		// eslint-disable-next-line
 	}, []);
 
 	if (!user) return null;

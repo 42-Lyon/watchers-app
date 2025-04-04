@@ -34,7 +34,7 @@ export default function Exams() {
 	
 	const [mode, setMode] = useState(currentOptions);
 
-	const { exams, create, loading, currentPage, pageCount, setPage } = useExams(mode.current)
+	const { exams, create, currentPage, pageCount, setPage } = useExams(mode.current)
 
 
 	const splitExams = (exams) => {

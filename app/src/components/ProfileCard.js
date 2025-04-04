@@ -1,7 +1,6 @@
 import { Card, Flex, HStack, Stack, Text } from "@chakra-ui/react";
 import { Avatar } from "./ui/avatar";
 import GroupBadge from "./GroupBadge";
-import UserDrawer from "./UserDrawer";
 
 export default function ProfileCard({user, children, ...props}) {
 

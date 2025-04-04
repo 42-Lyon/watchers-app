@@ -57,6 +57,7 @@ export default function useExams({filter = {}, sort = '-start_at', pageSize = 10
 
 	useEffect(() => {
 		fetchExams();
+		// eslint-disable-next-line
 	}, [currentPage]);
 
 	useEffect(() => {
@@ -66,6 +67,7 @@ export default function useExams({filter = {}, sort = '-start_at', pageSize = 10
 		else {
 			setCurrentPage(1);
 		}
+		// eslint-disable-next-line
 	}, [filter, sort, pageSize]);
 
 	const setPage = (page) => {
