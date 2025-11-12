@@ -14,7 +14,7 @@ const corsOptions =  {
 
 app.use(session({
     name: 'IntraWatcher.sid',
-    secret: process.env.SESSION_ID,
+    secret: process.env.SESSION_SECRET,
     httpOnly: true,
     secure: true,
     maxAge: 1000 * 60 * 60 * 7,
@@ -34,6 +34,7 @@ app.use('/auth', require('./routes/auth'));
 app.use('/exams', isLoggedIn, require('./routes/exams'));
 app.use('/users', isLoggedIn, require('./routes/users'));
 app.use('/logs', isLoggedIn, require('./routes/logs'));
+app.use('/sync', isLoggedIn, require ('./routes/sync'));
 
 app.get('/me', isLoggedIn, async (req, res) => {
 	return res.status(200).send(req.user);
