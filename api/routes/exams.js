@@ -1,9 +1,9 @@
-const insertRow = require("../google");
 const isStaff = require("../middlewares/isStaff");
 const parseExam = require("../middlewares/parseExam");
 const Exams = require("../models/Exams");
 const express = require("express");
 const { ExamCreationLogs, ExamDeletionLogs, ExamArchiveLogs, ExamUnregisterLogs, ExamRegisterLogs } = require("../models/Logs");
+const Mutex = require('async-mutex').Mutex;
 
 const router = new express.Router();
 
@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 		res.set('Access-Control-Expose-Headers', 'X-Total-Count, X-Page-Size, X-Page-Count');
 		return res.status(200).send(exams);
 	}
-	catch(e) {
+	catch (e) {
 		console.error(e);
 		return res.status(400).send();
 	}
@@ -70,7 +70,7 @@ router.post('/', isStaff, async (req, res) => {
 		}
 		return res.status(201).send(exam);
 	}
-	catch(e) {
+	catch (e) {
 		return res.status(400).send();
 	}
 });
@@ -119,8 +119,7 @@ router.post('/:id/register', async (req, res) => {
 			watch_has_experience = false;
 			await exam.populate('watchers');
 			for (const watcher of exam.watchers) {
-				if (watcher.nb_watch > 0)
-				{
+				if (watcher.nb_watch > 0) {
 					watch_has_experience = true;
 					break;
 				}
@@ -140,7 +139,7 @@ router.post('/:id/register', async (req, res) => {
 		log.save();
 		return res.status(200).send(exam.watchers);
 	}
-	catch(e) {
+	catch (e) {
 		console.error(e);
 		return res.status(400).send();
 	}
@@ -171,29 +170,51 @@ router.post('/:id/unregister', async (req, res) => {
 	}
 });
 
+
+const mutex = new Mutex();
+
 router.post('/:id/archive', isStaff, async (req, res) => {
+	const release = await mutex.acquire();
+
 	try {
 		const exam = await Exams.findById(req.params.id).populate('watchers');
 		if (!exam) {
-			return res.status(404).send("Exam not found");
+			throw { status: 404, message: 'Exam not found' };
 		}
-		if (exam.is_archived)
-			return res.status(400).send("This exam is already archived");
-		if (exam.start_at > new Date())
-			return res.status(400).send("This exam is not started yet");
+		if (exam.is_archived) {
+			throw { status: 400, message: 'This exam is already archived' };
+		}
+		if (exam.start_at > new Date()) {
+			throw { status: 400, message: 'This exam has not started yet' };
+		}
+
+		try {
+			const rewards = await fetch(process.env.INTRA_PROXY_ENDPOINT, {
+				method: "POST",
+				headers: {
+					'Authorization': `Bearer ${process.env.INTRA_PROXY_SECRET}`,
+					'Content-Type': `application/json`
+				},
+				body: JSON.stringify({
+					target: exam.watchers.map(w => w.login),
+					value: (exam.duration > 3 ? exam.duration + 1 : exam.duration) * 5,
+					reason: "Surveillance d'Exam",
+					transactable_type: "Tuteurs"
+				})
+			});
+			if (!rewards.ok) {
+				throw await rewards.json();
+			}
+		} catch (err) {
+			console.error(err);
+			throw { status: 502, message: 'Error awarding Altarian Dollars' };
+		}
+
 		exam.is_archived = true;
 		for (const watcher of exam.watchers) {
-			if (watcher.last_watch < exam.start_at)
+			if (!watcher.last_watch || watcher.last_watch < exam.start_at)
 				watcher.last_watch = exam.start_at;
-			watcher.nb_watch++;
-			try {
-				if (req.query.log_sheet === 'true' && process.env.SPREADSHEET_ID) {
-					await insertRow(watcher.login, exam.start_at);
-				}
-			}
-			catch {
-				return res.status(500).send("Error while updating the spreadsheet");
-			}
+			watcher.nb_watch = (watcher.nb_watch || 0) + 1;
 			await watcher.save();
 		}
 		await exam.save();
@@ -202,11 +223,20 @@ router.post('/:id/archive', isStaff, async (req, res) => {
 			exam: exam._id,
 			exam_date: exam.start_at
 		});
-		log.save();
-		return res.status(200).send(exam);
+		await log.save();
+
+		res.status(200).send(exam);
 	}
-	catch {
-		return res.status(400).send();
+	catch (e) {
+		if (e && e.status) {
+			res.status(e.status).send(e.message);
+		} else {
+			console.error(e);
+			res.status(500).send("Internal server error");
+		}
+	}
+	finally {
+		release();
 	}
 });
 

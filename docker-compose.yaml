@@ -18,17 +18,15 @@ services:
       - CLIENT_ID=${CLIENT_ID}
       - CLIENT_SECRET=${CLIENT_SECRET}
       - CALLBACK_URL=${CALLBACK_URL}
-      - SESSION_ID=${SESSION_ID}
-      - SPREADSHEET_ID=${SPREADSHEET_ID}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - INTRA_PROXY_ENDPOINT=${INTRA_PROXY_ENDPOINT}
+      - INTRA_PROXY_SECRET=${INTRA_PROXY_SECRET}
       - MONGO_URI=${MONGO_URI}
       - FRONTEND_URL=${FRONTEND_URL}
-      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     networks:
       - main
       - db
     restart: always
-    secrets:
-      - credentials.json
     image: bwisniew/intra-tutors-api:latest
   
   app:
@@ -59,7 +57,3 @@ networks:
     driver: bridge
   db:
     driver: bridge
-
-secrets:
-  credentials.json:
-    file: ./secrets/credentials.json
