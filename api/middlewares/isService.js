@@ -4,7 +4,7 @@ const SECRET = process.env.API_BEARER_TOKEN;
 
 module.exports = function isService(req, res, next) {
 	try {
-		if (SECRET) {
+		if (!SECRET) {
 			return res.status(503).send({ error: 'Service Unavailable: API_BEARER_TOKEN not configured' });
 		}
 
