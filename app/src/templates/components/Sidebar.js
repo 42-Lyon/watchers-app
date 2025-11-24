@@ -66,8 +66,8 @@ export default function Sidebar({ me, ...props }) {
 					w='100%' variant='solid' colorPalette='red' display='flex' justifyContent='space-between'
 					as='a' href={`${config.apiUrl}/auth/logout`}
 				>Logout <LuLogOut/></Button>
-				<CLink fontSize='xs' variant="underline">
-					Privacy Policy
+				<CLink fontSize='xs' variant="underline" href="https://github.com/UnRenardQuiDab/intraWatchers">
+					GitHub Repository
 				</CLink>
 			</Stack>
 		</Stack>
