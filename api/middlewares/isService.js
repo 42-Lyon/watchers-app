@@ -1,6 +1,10 @@
+const { timingSafeEqual } = require("crypto")
+
+const SECRET = process.env.API_BEARER_TOKEN;
+
 module.exports = function isService(req, res, next) {
 	try {
-		if (!process.env.API_BEARER_TOKEN) {
+		if (SECRET) {
 			return res.status(503).send({ error: 'Service Unavailable: API_BEARER_TOKEN not configured' });
 		}
 
@@ -15,7 +19,7 @@ module.exports = function isService(req, res, next) {
 		}
 		
 		const token = m[1];
-		if (token === process.env.API_BEARER_TOKEN) {
+		if (safeCompare(token, SECRET)) {
 			req.isService = true;
 			return next();
 		}
@@ -26,3 +30,11 @@ module.exports = function isService(req, res, next) {
 		return res.status(500).send({ error: 'Internal error' });
 	}
 };
+
+function safeCompare(a, b) {
+  try {
+    return timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
+  } catch {
+    return false; // different lengths or errors
+  }
+}
