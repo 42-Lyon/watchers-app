@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /*
-  syncWathes.js
+  syncWatches.js
   Usage:
 	# show diffs between app.nb_watch and intra transactions count
-	node scripts/syncWathes.js
+	node scripts/syncWatches.js
 
 	# apply fixes (set user.nb_watch to fetched count) - prompts for confirmation
-	node scripts/syncWathes.js --apply
+	node scripts/syncWatches.js --apply
 
   Notes:
 	- Requires the same environment as the API: MONGO_URI, INTRA_API credentials used by api42
