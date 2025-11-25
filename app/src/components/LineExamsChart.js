@@ -43,7 +43,7 @@ export default function LineExamsChart({ exams, ...props }) {
 			<Box w='100%' flex={6}>
 				<Line
 					data={{
-						labels: getLast12Months().map(date => date.toLocaleString("default", {month: "long", year: "numeric"})),
+						labels: getLast12Months().map(date => date.toLocaleString("default", {month: "long"})),
 						datasets: [{
 							label: ' Watch',
 							data: data,
