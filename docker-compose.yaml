@@ -24,6 +24,7 @@ services:
       - API_BEARER_TOKEN=${API_BEARER_TOKEN}
       - MONGO_URI=${MONGO_URI}
       - FRONTEND_URL=${FRONTEND_URL}
+      - NEWBIE_COUNT=${NEWBIE_COUNT}
     networks:
       - main
       - db
@@ -34,6 +35,8 @@ services:
       context: ./app
       args:
         REACT_APP_BACKEND_URL: ${BACKEND_URL}
+        REACT_APP_NEWBIE_COUNT: ${NEWBIE_COUNT}
+        REACT_APP_LIFEGUARD_COUNT: ${LIFEGUARD_COUNT}
     networks:
       - main
     restart: always

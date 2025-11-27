@@ -6,6 +6,8 @@ import { Button } from "./ui/button";
 import { toaster } from "./ui/toaster";
 import { LuEllipsis, LuPlus, LuX } from "react-icons/lu";
 
+const NEWBIE_COUNT = Number(process.env.REACT_APP_NEWBIE_COUNT) || 1;
+
 export default function ExamSlot({ watcher, exam, disabled }) {
 
 	const { me } = useMe();
@@ -77,7 +79,7 @@ export default function ExamSlot({ watcher, exam, disabled }) {
 	if (watcher) {
 		return (
 			<Center minHeight='40px' width='100%' borderRadius='sm' gap='8px' bg={IAmWatcher ? 'bg.info' : 'bg.emphasized'}>
-				<Avatar size='2xs' name={watcher.login} src={watcher.image_url} css={watcher.nb_watch === 0 && ringCss} colorPalette='blue' />
+				<Avatar size='2xs' name={watcher.login} src={watcher.image_url} css={watcher.nb_watch < NEWBIE_COUNT && ringCss} colorPalette='blue' />
 				{watcher.login}
 			</Center>
 		)

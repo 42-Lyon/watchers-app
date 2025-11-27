@@ -11,6 +11,7 @@ import LastArchivedTimeLine from "../components/LastArchivedTimeLine";
 import { useEffect, useState } from "react";
 
 export default function Statistics() {
+	const LIFEGUARD_COUNT = Number(process.env.REACT_APP_LIFEGUARD_COUNT) || 6;
 	
 	const { me, getMyExams } = useMe();
 
@@ -25,9 +26,9 @@ export default function Statistics() {
 	}, [me]);
 
 	const examAchivement = me && [{
-		label: "Life Guard",
-		completed: me.nb_watch >= 6,
-		needed: 6
+		label: "Lifeguard eligibility",
+		completed: me.nb_watch >= LIFEGUARD_COUNT,
+		needed: LIFEGUARD_COUNT
 	}, {
 		label: "Achivement 1/2",
 		completed: me.nb_watch >= 12,

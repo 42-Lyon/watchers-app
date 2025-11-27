@@ -3,6 +3,7 @@ const parseExam = require("../middlewares/parseExam");
 const Exams = require("../models/Exams");
 const express = require("express");
 const { ExamCreationLogs, ExamDeletionLogs, ExamArchiveLogs, ExamUnregisterLogs, ExamRegisterLogs } = require("../models/Logs");
+const env = require("../env");
 const Mutex = require('async-mutex').Mutex;
 
 const router = new express.Router();
@@ -101,6 +102,9 @@ router.post('/:id/register', async (req, res) => {
 		if (!exam) {
 			return res.status(404).send();
 		}
+		const end_at = new Date(new Date(exam.start_at).setHours(new Date(exam.start_at).getHours() + exam.duration));
+		if (end_at < new Date())
+			return res.status(403).send("This exam is already finished");
 		if (exam.watchers.length >= exam.nb_slots)
 			return res.status(400).send("No more slots available");
 		if (exam.watchers.includes(req.user._id))
@@ -119,15 +123,15 @@ router.post('/:id/register', async (req, res) => {
 			watch_has_experience = false;
 			await exam.populate('watchers');
 			for (const watcher of exam.watchers) {
-				if (watcher.nb_watch > 0) {
+				if (watcher.nb_watch >= env.NEWBIE_COUNT) {
 					watch_has_experience = true;
 					break;
 				}
 			}
 		}
 
-		if (!watch_has_experience && req.user.nb_watch == 0 && !req.user.is_staff)
-			return res.status(400).send("At least one watcher must have already done a watch");
+		if (!watch_has_experience && req.user.nb_watch < env.NEWBIE_COUNT)
+			return res.status(400).send("Sorry, an exam need at least one watcher that is not a newbie");
 		exam.watchers.push(req.user._id);
 		await exam.save();
 		await exam.populate('watchers');
@@ -151,9 +155,9 @@ router.post('/:id/unregister', async (req, res) => {
 		if (!exam) {
 			return res.status(404).send();
 		}
-		// const end_at = new Date(new Date(exam.start_at).setHours(new Date(exam.start_at).getHours() + exam.duration));
-		// if (end_at < new Date())
-		// 	return res.status(400).send("This exam is already finished");
+		const end_at = new Date(new Date(exam.start_at).setHours(new Date(exam.start_at).getHours() + exam.duration));
+		if (end_at < new Date())
+			return res.status(403).send("This exam is already finished");
 		exam.watchers = exam.watchers.filter(watcher => !watcher.equals(req.user._id));
 		await exam.save();
 		await exam.populate('watchers');
