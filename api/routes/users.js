@@ -54,7 +54,7 @@ router.post('/', isStaff, async (req, res) => {
 			firstname: intraUser.first_name,
 			lastname: intraUser.last_name,
 			image_url: intraUser.image.link,
-			is_staff: groups.some(group => group.name === 'STAFF'),
+			is_staff: intraUser['staff?'] || false,
 			groups: groups.filter(group => group.name === 'Tutor' || group.name === 'Watcher').map(group => group.name),
 		});
 		await user.save();
