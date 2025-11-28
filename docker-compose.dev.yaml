@@ -26,6 +26,7 @@ services:
       - INTRA_PROXY_SECRET=${INTRA_PROXY_SECRET}
       - API_BEARER_TOKEN=${API_BEARER_TOKEN}
       - NEWBIE_COUNT=${NEWBIE_COUNT}
+      - CAMPUS_ID=${CAMPUS_ID}
     networks:
       - main
       - db

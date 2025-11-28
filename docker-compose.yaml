@@ -25,6 +25,7 @@ services:
       - MONGO_URI=${MONGO_URI}
       - FRONTEND_URL=${FRONTEND_URL}
       - NEWBIE_COUNT=${NEWBIE_COUNT}
+      - CAMPUS_ID=${CAMPUS_ID}
     networks:
       - main
       - db
