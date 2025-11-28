@@ -29,7 +29,7 @@ router.get('/42/callback', async (req, res) => {
 			{ login: me.login },
 			{
 				login: me.login,
-				is_staff: existingUser?.is_staff ?? me['staff?'],
+				is_staff: existingUser?.is_staff ?? (me['staff?'] || false),
 				firstname: me.first_name,
 				lastname: me.last_name,
 				image_url: me.image.link,
