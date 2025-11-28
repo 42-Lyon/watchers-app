@@ -1,5 +1,6 @@
 const env = {
-	CAMPUS_ID: Number(process.env.CAMPUS_ID)
+	CAMPUS_ID: Number(process.env.CAMPUS_ID),
+	NEWBIE_COUNT: Number(process.env.NEWBIE_COUNT) || 1
 };
 
 if (isNaN(env.CAMPUS_ID)) {
